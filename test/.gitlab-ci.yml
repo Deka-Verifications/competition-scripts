@@ -1,5 +1,4 @@
 stages:
-  - imagesPython
   - imagesUser
   - imagesTest
 
@@ -25,10 +24,11 @@ variables:
 
 build-docker:python:latest:
   extends: .build-docker
-  stage: imagesPython
+  stage: imagesTest
   variables:
     DOCKERFILE: test/Dockerfile.python
     IMAGE: python:latest
+  needs: []
 
 build-docker:user:latest:
   extends: .build-docker
@@ -43,6 +43,5 @@ build-docker:test:latest:
   variables:
     DOCKERFILE: test/Dockerfile.test
     IMAGE: test:latest
-  dependencies:
-    - build-docker:user:latest
+  needs: ["build-docker:user:latest"]
 
