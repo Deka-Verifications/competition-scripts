@@ -1,0 +1,28 @@
+# Build Docker image via GitLab CI.
+# Commands for manually updating the image:
+# (0) Prepare image for 'test'
+# (1) docker build --pull -t registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/test:latest - < Dockerfile.test
+# (2) Create a Gitlab token under https://gitlab.com/profile/personal_access_tokens
+#     - Name: "docker-competition" or so
+#     - ExpiresAt: e.g., 2021-09-23
+#     - Scope: API is sufficient
+#     IMPORTANT: Remember new secret token!
+# (3) docker login registry.gitlab.com
+#     - Username=dbeyer
+#     - Password: above-generated secret token
+# (4) docker push registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/test:latest
+
+FROM registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/user:latest
+RUN apt-get update && apt-get install -y \
+  python3 \
+  python3-pip \
+  python3-yaml \
+  git \
+  make \
+  wget \
+  unzip
+
+RUN pip3 install lxml pyyaml
+
+RUN git clone https://gitlab.com/sosy-lab/sv-comp/bench-defs
+#RUN cd bench-defs; make init

@@ -1,0 +1,99 @@
+# Build Docker image via GitLab CI.
+# Commands for manually updating the image:
+# (1) docker build --pull -t registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/user:latest - < Dockerfile.user
+# (2) Create a Gitlab token under https://gitlab.com/profile/personal_access_tokens
+#     - Name: "docker-competition" or so
+#     - ExpiresAt: e.g., 2021-09-23
+#     - Scope: API is sufficient
+#     IMPORTANT: Remember new secret token!
+# (3) docker login registry.gitlab.com
+#     - Username=dbeyer
+#     - Password: above-generated secret token
+# (4) docker push registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/user:latest
+
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y tzdata
+RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN dpkg --add-architecture i386
+RUN apt-get install -y \
+      linux-image-generic \
+      lxcfs \
+      ubuntu-minimal \
+      openjdk-11-jdk-headless \
+      gcc-multilib \
+      libgomp1 \
+      clang \
+      clang-6.0 \
+      expect \
+      frama-c-base \
+      gcc-7-multilib \
+      g++-multilib \
+      lcov \
+      libc6-dev-i386 \
+      libtinfo5 \
+      libwhy3-ocaml-dev \
+      openjdk-8-jdk-headless \
+      openmpi-bin \
+      python2 \
+      python3-mpi4py \
+      python3-numpy \
+      python3-setuptools \
+      sbcl
+
+# Requirements from SV-COMP'20 and Test-Comp'20:
+#
+# (Fetch latest version from the Ansible configuration for the competition machines:
+#  https://gitlab.com/sosy-lab/admin/sysadmin/ansible/blob/master/roles/benchmarking/tasks/main.yml)
+#
+# Last synchronized: 2020-10-14
+#
+#      - linux-image-generic
+#      - lxcfs
+#      - ubuntu-minimal
+#      #- acpid
+#      #- graphviz
+#      - openjdk-11-jdk-headless
+#      - gcc-multilib # cpp, development headers
+#      - libgomp1 # for Z3
+#      #- make # for fshellw2t
+#      - clang # SV-COMP'19 AProVE, Test-Comp'20 LibKluzzer
+#      #- clang-3.9 # SV-COMP'20 Dartagnan
+#      - clang-6.0 # SV-COMP'20 VeriAbs, Test-Comp'20 LibKluzzer, Klee
+#      #- clang-7 # SV-COMP'20 VeriFuzz
+#      - expect # SV-COMP'20 PredatorHP
+#      - frama-c-base
+#      #- libc6-dev # SV-COMP'20 Map2Check
+#      #- lldb-3.9 # SV-COMP'20 Dartagnan
+#      #- llvm-6.0 # SV-COMP'20 VeriAbs, Test-Comp'20 LibKluzzer
+#      #- mono-devel # SV-COMP'19 AProVE, SMACK
+#      #- gcc-5-multilib # SV-COMP'19 PredatorHP
+#      - gcc-7-multilib # SV-COMP'20 PredatorHP
+#      - g++-multilib # Test-Comp'20 LibKluzzer
+#      #- python-minimal # SV-COMP'20 Map2Check, Test-Comp'20 Tracer-X
+#      #- python # SV-COMP'20 PredatorHP, Symbiotic
+#      #- python-lxml # SV-COMP'20 Symbiotic
+#      - lcov # TestCov
+#      - libc6-dev-i386 # SV-COMP'20 CBMC, VeriAbs, VeriFuzz
+#      - libtinfo5 # Thomas L.: llvm2c
+#      #- linux-libc-dev:i386 # SV-COMP'20 CBMC
+#      - openjdk-8-jdk-headless # SV-COMP'20 Ultimate
+#      - openmpi-bin
+#      #- python-sklearn # SV-COMP'20 VeriFuzz
+#      #- python-pandas # SV-COMP'20 VeriFuzz
+#      #- python-pycparser # SV-COMP'19 CSeq
+#      - python3-mpi4py
+#      - python3-numpy # Gidon
+#      - python3-setuptools # SecC
+#      - sbcl # SV-COMP'20 GACAL
+#      #- unzip # SV-COMP'19 JBMC, Test-Comp'20 Tracer-X
+#      #- uncrustify
+#      #- exuberant-ctags
+#      #- libboost-graph1.58.0
+#      #- libz3-dev
+#      #- llvm
+#      #- libhtml-parser-perl
+#      #- libdigest-sha-perl
+
+

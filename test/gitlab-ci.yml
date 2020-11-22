@@ -1,0 +1,40 @@
+stages:
+  - imagesUser
+  - imagesTest
+
+include:
+  # Run CI for default branch, tags, and merge requests (not for other branches)
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+
+variables:
+  GIT_DEPTH: "1"
+  GIT_STRATEGY: fetch
+
+.build-docker:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /root/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --dockerfile $CI_PROJECT_DIR/$DOCKERFILE --destination $CI_REGISTRY_IMAGE/$IMAGE
+  only:
+    - schedules
+    - web
+
+build-docker:user:latest:
+  extends: .build-docker
+  stage: imagesUser
+  variables:
+    DOCKERFILE: Dockerfile.user
+    IMAGE: user:latest
+
+build-docker:test:latest:
+  extends: .build-docker
+  stage: imagesTest
+  variables:
+    DOCKERFILE: Dockerfile.test
+    IMAGE: test:latest
+  dependencies:
+    - build-docker:user:latest
+
