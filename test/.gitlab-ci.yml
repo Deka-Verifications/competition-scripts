@@ -29,6 +29,9 @@ build-docker:python:latest:
     DOCKERFILE: test/Dockerfile.python
     IMAGE: python:latest
   needs: []
+  only:
+    changes:
+      - "test/Dockerfile.python"
 
 build-docker:user:latest:
   extends: .build-docker
