@@ -36,6 +36,9 @@ build-docker:user:latest:
   variables:
     DOCKERFILE: test/Dockerfile.user
     IMAGE: user:latest
+  only:
+    changes:
+      - "test/Dockerfile.user"
 
 build-docker:test:latest:
   extends: .build-docker
@@ -44,4 +47,7 @@ build-docker:test:latest:
     DOCKERFILE: test/Dockerfile.test
     IMAGE: test:latest
   needs: ["build-docker:user:latest"]
+  only:
+    changes:
+      - "test/Dockerfile*"
 
