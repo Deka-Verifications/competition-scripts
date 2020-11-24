@@ -151,7 +151,7 @@ def _check_all_sets_used(
         for t in tasks_defined
         for include in t.findall("includesfile")
     }
-    categories_included = {_get_category_name(setfile) for setfile in sets_included}
+    categories_included = {util.get_category_name(setfile) for setfile in sets_included}
     categories_expected = _get_base_categories_participating(
         _get_verifier_name(bench_def), category_info
     )
