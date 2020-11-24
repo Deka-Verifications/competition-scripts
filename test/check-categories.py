@@ -3,7 +3,7 @@ import argparse
 import logging
 from pathlib import Path
 import sys
-from typing import List, Iterable
+from typing import Iterable
 import _util as util
 
 
@@ -17,7 +17,7 @@ def _all_categories(category_info: dict) -> Iterable[str]:
     categories = set(meta_categories.keys())
     for info in meta_categories.values():
         # do not use util.get_category_name(c) on purpose, to distinguish same task sets for different properties
-        categories |= {c for c in info["categories"]}
+        categories |= set(info["categories"])
     return categories
 
 
@@ -50,6 +50,22 @@ def _get_prop_name(property_file) -> str:
     return _get_prop_name(Path(property_file))
 
 
+def _is_category_empty(set_file: Path, prop: str, tasks_dir: Path) -> Iterable[str]:
+    with open(set_file) as inp:
+        globs = [
+            line.strip()
+            for line in inp.readlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+    tasks = (t for g in globs for t in tasks_dir.glob(g))
+    for t in tasks:
+        task_yaml = util.parse_yaml(t)
+        props = (_get_prop_name(p["property_file"]) for p in task_yaml["properties"])
+        if prop in props:
+            return False
+    return True
+
+
 def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable[str]:
     meta_categories = _all_categories(category_info) - _base_categories(category_info)
     for _, c in category_info["categories"].items():
@@ -61,22 +77,7 @@ def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable
             if not expected_set.exists():
                 yield f"Set missing: {expected_set}"
                 continue
-
-            with open(expected_set) as inp:
-                globs = [
-                    line.strip()
-                    for line in inp.readlines()
-                    if line.strip() and not line.strip().startswith("#")
-                ]
-            tasks = (t for g in globs for t in tasks_dir.glob(g))
-            for t in tasks:
-                task_yaml = util.parse_yaml(t)
-                props = (
-                    _get_prop_name(p["property_file"]) for p in task_yaml["properties"]
-                )
-                if expected_prop in props:
-                    break
-            else:
+            if _is_category_empty(expected_set, expected_prop, tasks_dir):
                 yield f"No task for property {expected_prop} in category {b}"
 
 
