@@ -132,9 +132,11 @@ def main(argv=None):
 
     category_info = util.parse_yaml(args.category_structure)
     errors = check_categories(category_info, args.tasks_base_dir)
+    success = True
     for msg in errors:
+        success = False
         util.error(msg)
-    return 1 if errors else 0
+    return 0 if success else 1
 
 
 if __name__ == "__main__":
