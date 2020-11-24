@@ -44,9 +44,46 @@ def _check_info_consistency(category_info: dict) -> Iterable[str]:
         yield f"Categories used in process or table order, but missing in meta categories: {(in_process_order | in_table_order) - categories_used}"
 
 
-def check_categories(category_info: dict) -> Iterable[str]:
+def _get_prop_name(property_file) -> str:
+    if isinstance(property_file, Path):
+        return property_file.name[: -len(".prp")]
+    return _get_prop_name(Path(property_file))
+
+
+def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable[str]:
+    meta_categories = _all_categories(category_info) - _base_categories(category_info)
+    for _, c in category_info["categories"].items():
+        expected_prop = c["properties"]
+        base_categories = set(c["categories"]) - meta_categories
+        for b in base_categories:
+            name = util.get_category_name(b)
+            expected_set = tasks_dir / (name + ".set")
+            if not expected_set.exists():
+                yield f"Set missing: {expected_set}"
+                continue
+
+            with open(expected_set) as inp:
+                globs = [
+                    line.strip()
+                    for line in inp.readlines()
+                    if line.strip() and not line.strip().startswith("#")
+                ]
+            tasks = (t for g in globs for t in tasks_dir.glob(g))
+            for t in tasks:
+                task_yaml = util.parse_yaml(t)
+                props = (
+                    _get_prop_name(p["property_file"]) for p in task_yaml["properties"]
+                )
+                if expected_prop in props:
+                    break
+            else:
+                yield f"No task for property {expected_prop} in category {b}"
+
+
+def check_categories(category_info: dict, tasks_dir: Path) -> Iterable[str]:
     errors = list()
     errors += _check_info_consistency(category_info)
+    errors += _check_categories_nonempty(category_info, tasks_dir)
     return errors
 
 
@@ -84,7 +121,7 @@ def main(argv=None):
     args = parse_args(argv)
 
     category_info = util.parse_yaml(args.category_structure)
-    errors = check_categories(category_info)
+    errors = check_categories(category_info, args.tasks_base_dir / "c")
     for msg in errors:
         util.error(msg)
     return 1 if errors else 0
