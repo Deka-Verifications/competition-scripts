@@ -3,15 +3,16 @@ import argparse
 import logging
 from pathlib import Path
 import sys
+from typing import List, Iterable
 import _util as util
 
 
-def _base_categories(category_info):
+def _base_categories(category_info: dict) -> Iterable[str]:
     meta_categories = set(category_info["categories"].keys())
     return _all_categories(category_info) - meta_categories
 
 
-def _all_categories(category_info):
+def _all_categories(category_info: dict) -> Iterable[str]:
     meta_categories = category_info["categories"]
     categories = set(meta_categories.keys())
     for info in meta_categories.values():
@@ -20,39 +21,30 @@ def _all_categories(category_info):
     return categories
 
 
-def _check_info_consistency(category_info):
+def _check_info_consistency(category_info: dict) -> Iterable[str]:
     if not "categories_process_order" in category_info:
-        return ["Missing 'categories_process_order'"]
+        yield "Missing 'categories_process_order'"
+        return
     in_process_order = set(category_info["categories_process_order"])
 
     if not "categories_table_order" in category_info:
-        return ["Missing 'categories_table_order'"]
+        yield "Missing 'categories_table_order'"
+        return
     in_table_order = set(category_info["categories_table_order"])
 
-    errors = list()
     if len(in_process_order) > len(in_table_order):
-        errors.append(
-            f"Categories listed in process order, but missing in table order: {in_process_order - in_table_order}"
-        )
+        yield f"Categories listed in process order, but missing in table order: {in_process_order - in_table_order}"
     if len(in_process_order) < len(in_process_order):
-        errors.append(
-            f"Categories listed in table order, but missing in process order: {in_table_order - in_process_order}"
-        )
+        yield f"Categories listed in table order, but missing in process order: {in_table_order - in_process_order}"
 
     categories_used = _all_categories(category_info)
     if len(categories_used) > len(in_process_order | in_table_order):
-        errors.append(
-            f"Categories (used in) meta categories, but missing in process and table order: {categories_used - (in_process_order | in_table_order)}"
-        )
+        yield f"Categories (used in) meta categories, but missing in process and table order: {categories_used - (in_process_order | in_table_order)}"
     if len(categories_used) < len(in_process_order | in_table_order):
-        errors.append(
-            f"Categories used in process or table order, but missing in meta categories: {(in_process_order | in_table_order) - categories_used}"
-        )
-
-    return errors
+        yield f"Categories used in process or table order, but missing in meta categories: {(in_process_order | in_table_order) - categories_used}"
 
 
-def check_categories(category_info):
+def check_categories(category_info: dict) -> Iterable[str]:
     errors = list()
     errors += _check_info_consistency(category_info)
     return errors
@@ -93,9 +85,8 @@ def main(argv=None):
 
     category_info = util.parse_yaml(args.category_structure)
     errors = check_categories(category_info)
-    if errors:
-        for msg in errors:
-            util.error(msg)
+    for msg in errors:
+        util.error(msg)
     return 1 if errors else 0
 
 
