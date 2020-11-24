@@ -5,10 +5,8 @@ import logging
 from pathlib import Path
 from urllib import request
 from lxml import etree
-import yaml
 import _util as util
 
-BENCHDEF_SUFFIX = ".xml"
 ALLOWLIST_TASK_SETS = [
     # only properties not used in SV-COMP
     "DefinedBehavior-TerminCrafted",
@@ -137,22 +135,11 @@ def _get_base_categories_participating(
     if exclude_opt_outs:
         categories_participating -= opt_outs
     categories_participating |= opt_ins
-    return {_get_category_name(c) for c in categories_participating}
+    return {util.get_category_name(c) for c in categories_participating}
 
 
 def _get_verifier_name(bench_def: Path) -> str:
     return bench_def.name[: -len(".xml")]
-
-
-def _get_category_name(set_file) -> str:
-    if isinstance(set_file, Path):
-        return _get_category_name(set_file.name)
-    name = set_file
-    if name.endswith(".set"):
-        name = name[: -len(".set")]
-    if "." in name:
-        name = ".".join(name.split(".")[1:])
-    return name
 
 
 def _check_all_sets_used(
@@ -209,11 +196,6 @@ def _check_bench_def(xml: Path, category_info, /, tasks_dir: Path):
     return not errors
 
 
-def parse_yaml(yaml_file):
-    with open(yaml_file) as inp:
-        return yaml.safe_load(inp)
-
-
 def parse_args(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -255,27 +237,14 @@ def parse_args(argv):
     return args
 
 
-def _verifiers_in_category(category_info, category):
-    categories = category_info["categories"]
-    if category not in categories:
-        return []
-    return [v + BENCHDEF_SUFFIX for v in categories[category]["verifiers"]]
-
-
-def _unused_verifiers(category_info):
-    if "not_participating" not in category_info:
-        return []
-    return category_info["not_participating"]
-
-
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     args = parse_args(argv)
 
-    category_info = parse_yaml(args.category_structure)
-    java_verifiers = _verifiers_in_category(category_info, "JavaOverall")
-    unmaintained = _unused_verifiers(category_info)
+    category_info = util.parse_yaml(args.category_structure)
+    java_verifiers = util.verifiers_in_category(category_info, "JavaOverall")
+    unmaintained = util.unused_verifiers(category_info)
     success = True
     if not args.tasks_base_dir or not args.tasks_base_dir.exists():
         util.info(
