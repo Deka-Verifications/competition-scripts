@@ -53,10 +53,8 @@ def _check_valid(xml_file: Path):
     try:
         etree.parse(str(xml_file), PARSER)
         return []
-    except etree.ParseError as e:
-        return [e]
-    except etree.XMLSyntaxError as e:
-        return [e]
+    except (etree.ParseError, etree.XMLSyntaxError) as e:
+        return ["Failed parsing xml: " + str(e)]
 
 
 def _get_tasks(xml_file):
@@ -108,6 +106,8 @@ def _check_task_defs_match_set(xml_file: Path, /, tasks_dir: Path):
                         set_name, name
                     )
                 )
+        if task_tag.findall("option"):
+            errors.append("task {} contains <option> tag.".format(name))
 
     return errors
 
@@ -148,10 +148,10 @@ def _get_category_name(set_file) -> str:
     if isinstance(set_file, Path):
         return _get_category_name(set_file.name)
     name = set_file
-    if name.endswith('.set'):
-        name = name[:-len(".set")]
-    if '.' in name:
-        name = '.'.join(name.split('.')[1:])
+    if name.endswith(".set"):
+        name = name[: -len(".set")]
+    if "." in name:
+        name = ".".join(name.split(".")[1:])
     return name
 
 
@@ -183,11 +183,12 @@ def _check_all_sets_used(
     return list()
 
 
-def _check_bench_def(xml: Path, category_info, /, tasks_dir: Path):
-    """Checks the given xml benchmark definition for conformance."""
+def _perform_checks(xml: Path, category_info, tasks_dir: Path):
     util.info(str(xml), label="CHECKING")
-    errors = _check_valid(xml)
-    errors += _check_task_defs_match_set(xml, tasks_dir=tasks_dir)
+    xml_errors = _check_valid(xml)
+    if xml_errors:
+        return xml_errors
+    errors = _check_task_defs_match_set(xml, tasks_dir=tasks_dir)
     if tasks_dir.exists() and not "validate" in xml.name:
         errors += _check_all_sets_used(
             xml,
@@ -195,7 +196,12 @@ def _check_bench_def(xml: Path, category_info, /, tasks_dir: Path):
             tasks_directory=tasks_dir,
             exceptions=ALLOWLIST_TASK_SETS,
         )
+    return errors
 
+
+def _check_bench_def(xml: Path, category_info, /, tasks_dir: Path):
+    """Checks the given xml benchmark definition for conformance."""
+    errors = _perform_checks(xml, category_info, tasks_dir)
     if errors:
         util.error(xml)
         for msg in errors:
@@ -278,6 +284,9 @@ def main(argv=None):
     for bench_def in args.benchmark_definition:
         if _get_verifier_name(bench_def) in unmaintained:
             util.info(f"{bench_def}", label="SKIP")
+            continue
+        if bench_def.is_dir():
+            util.info(str(bench_def) + " (is directory)", label="SKIP")
             continue
         if bench_def.name in java_verifiers:
             tasks_directory = args.tasks_base_dir / "java"

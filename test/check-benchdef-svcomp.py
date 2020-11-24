@@ -137,7 +137,7 @@ def _get_base_categories_participating(
     if exclude_opt_outs:
         categories_participating -= opt_outs
     categories_participating |= opt_ins
-    return categories_participating
+    return {_get_category_name(c) for c in categories_participating}
 
 
 def _get_verifier_name(bench_def: Path) -> str:
@@ -146,8 +146,13 @@ def _get_verifier_name(bench_def: Path) -> str:
 
 def _get_category_name(set_file) -> str:
     if isinstance(set_file, Path):
-        return set_file.name[: -len(".set")]
-    return set_file[: -len(".set")]
+        return _get_category_name(set_file.name)
+    name = set_file
+    if name.endswith(".set"):
+        name = name[: -len(".set")]
+    if "." in name:
+        name = ".".join(name.split(".")[1:])
+    return name
 
 
 def _check_all_sets_used(
