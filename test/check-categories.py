@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 import sys
 from typing import Iterable
+import itertools
 import _util as util
 
 
@@ -50,14 +51,14 @@ def _get_prop_name(property_file) -> str:
     return _get_prop_name(Path(property_file))
 
 
-def _is_category_empty(set_file: Path, prop: str, tasks_dir: Path) -> Iterable[str]:
+def _is_category_empty(set_file: Path, prop: str) -> Iterable[str]:
     with open(set_file) as inp:
         globs = [
             line.strip()
             for line in inp.readlines()
             if line.strip() and not line.strip().startswith("#")
         ]
-    tasks = (t for g in globs for t in tasks_dir.glob(g))
+    tasks = (t for g in globs for t in set_file.parent.glob(g))
     for t in tasks:
         task_yaml = util.parse_yaml(t)
         props = (_get_prop_name(p["property_file"]) for p in task_yaml["properties"])
@@ -69,22 +70,30 @@ def _is_category_empty(set_file: Path, prop: str, tasks_dir: Path) -> Iterable[s
 def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable[str]:
     meta_categories = _all_categories(category_info) - _base_categories(category_info)
     for _, c in category_info["categories"].items():
-        expected_prop = c["properties"]
+        expected_props = c["properties"]
+        if isinstance(expected_props, str):
+            expected_props = [expected_props]
+        expected_props = [
+            p[: -len("_java")] if p.endswith("_java") else p for p in expected_props
+        ]
         base_categories = set(c["categories"]) - meta_categories
         for b in base_categories:
             name = util.get_category_name(b)
-            expected_set = tasks_dir / (name + ".set")
-            if not expected_set.exists():
-                yield f"Set missing: {expected_set}"
+            set_name = name + ".set"
+            expected_sets = [tasks_dir / lang / set_name for lang in ("c", "java")]
+            existing_set = next((s for s in expected_sets if s.exists()), None)
+            if not existing_set:
+                yield f"Set missing. Expected any of the following: {[str(s) for s in expected_sets]}"
                 continue
-            if _is_category_empty(expected_set, expected_prop, tasks_dir):
-                yield f"No task for property {expected_prop} in category {b}"
+            if all((_is_category_empty(existing_set, prop) for prop in expected_props)):
+                yield f"No task for properties {expected_props} in category {b} (set file: {existing_set})"
 
 
 def check_categories(category_info: dict, tasks_dir: Path) -> Iterable[str]:
-    errors = list()
-    errors += _check_info_consistency(category_info)
-    errors += _check_categories_nonempty(category_info, tasks_dir)
+    errors = _check_info_consistency(category_info)
+    errors = itertools.chain(
+        errors, _check_categories_nonempty(category_info, tasks_dir)
+    )
     return errors
 
 
@@ -122,7 +131,7 @@ def main(argv=None):
     args = parse_args(argv)
 
     category_info = util.parse_yaml(args.category_structure)
-    errors = check_categories(category_info, args.tasks_base_dir / "c")
+    errors = check_categories(category_info, args.tasks_base_dir)
     for msg in errors:
         util.error(msg)
     return 1 if errors else 0
