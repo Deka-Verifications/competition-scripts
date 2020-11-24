@@ -6,14 +6,13 @@ if sys.version_info < (3,):
     sys.exit("benchexec.test_tool_info needs Python 3 to run.")
 
 import argparse
-import inspect
 import os
 import re
 import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 import logging
-from benchexec import model, test_tool_info
+from benchexec import model
 from benchexec.tools.template import BaseTool2
 from subprocess import call
 from types import SimpleNamespace
@@ -187,6 +186,7 @@ def checkToolInfoModule(zipfilename, root_directory, toolname, config):
 def _checkToolInfoModule(toolname, config):
     try:
         # nice colorful dump, but we would need to parse it
+        # from benchexec import test_tool_info
         # test_tool_info.print_tool_info(toolname)
 
         _, tool = model.load_tool_info(toolname, config)
@@ -205,6 +205,7 @@ def _checkToolInfoModule(toolname, config):
         reported_name = ""
 
     try:
+        # import inspect
         # if not inspect.getdoc(tool):
         #     error("tool %s has no documentation" % toolname)
         exe = tool.executable(BaseTool2.ToolLocator(use_path=True, use_current=True))
