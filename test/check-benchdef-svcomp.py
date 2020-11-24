@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib import request
 from lxml import etree
 import yaml
+import _util as util
 
 BENCHDEF_SUFFIX = ".xml"
 ALLOWLIST_TASK_SETS = [
@@ -20,52 +21,6 @@ ALLOWLIST_TASK_SETS = [
     # unused
     "Unused_Juliet",
 ]
-
-COLOR_RED = "\033[31;1m"
-COLOR_GREEN = "\033[32;1m"
-COLOR_ORANGE = "\033[33;1m"
-COLOR_MAGENTA = "\033[35;1m"
-
-COLOR_DEFAULT = "\033[m"
-COLOR_DESCRIPTION = COLOR_MAGENTA
-COLOR_VALUE = COLOR_GREEN
-COLOR_WARNING = COLOR_RED
-
-# if not sys.stdout.isatty():
-#    COLOR_DEFAULT = ''
-#    COLOR_DESCRIPTION = ''
-#    COLOR_VALUE = ''
-#    COLOR_WARNING = ''
-
-
-def addColor(description, value, color=COLOR_VALUE, sep=": "):
-    return "".join(
-        (
-            COLOR_DESCRIPTION,
-            description,
-            COLOR_DEFAULT,
-            sep,
-            color,
-            value,
-            COLOR_DEFAULT,
-        )
-    )
-
-
-def error(msg, cause=None, label="    ERROR"):
-    msg = addColor(label, str(msg), color=COLOR_WARNING)
-    if cause:
-        logging.exception(msg)
-    else:
-        logging.error(msg)
-    global errorFound
-
-
-def info(msg, label="INFO"):
-    msg = str(msg)
-    if label:
-        msg = addColor(label, msg)
-    logging.info(msg)
 
 
 class DTDResolver(etree.Resolver):
@@ -224,7 +179,7 @@ def _check_all_sets_used(
 
 
 def _perform_checks(xml: Path, category_info, tasks_dir: Path):
-    info(str(xml), label="CHECKING")
+    util.info(str(xml), label="CHECKING")
     xml_errors = _check_valid(xml)
     if xml_errors:
         return xml_errors
@@ -243,9 +198,9 @@ def _check_bench_def(xml: Path, category_info, /, tasks_dir: Path):
     """Checks the given xml benchmark definition for conformance."""
     errors = _perform_checks(xml, category_info, tasks_dir)
     if errors:
-        error(xml)
+        util.error(xml)
         for msg in errors:
-            error(msg)
+            util.error(msg)
     return not errors
 
 
@@ -318,15 +273,15 @@ def main(argv=None):
     unmaintained = _unused_verifiers(category_info)
     success = True
     if not args.tasks_base_dir or not args.tasks_base_dir.exists():
-        info(
+        util.info(
             f"Tasks directory doesn't exist. Will skip some checks. (Directory: {str(args.tasks_base_dir)})"
         )
     for bench_def in args.benchmark_definition:
         if _get_verifier_name(bench_def) in unmaintained:
-            info(f"{bench_def}", label="SKIP")
+            util.info(f"{bench_def}", label="SKIP")
             continue
         if bench_def.is_dir():
-            info(str(bench_def) + " (is directory)", label="SKIP")
+            util.info(str(bench_def) + " (is directory)", label="SKIP")
             continue
         if bench_def.name in java_verifiers:
             tasks_directory = args.tasks_base_dir / "java"

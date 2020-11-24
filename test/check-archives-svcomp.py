@@ -18,6 +18,7 @@ from benchexec.tools.template import BaseTool2
 from subprocess import call
 from types import SimpleNamespace
 from urllib.request import urlopen, Request, HTTPError
+import _util as util
 
 sys.dont_write_bytecode = True  # prevent creation of .pyc files
 
@@ -36,37 +37,6 @@ DEF_MISSING_ERROR = "file '%s' not available. Please rename the archive to match
 
 
 errorFound = False
-
-COLOR_RED = "\033[31;1m"
-COLOR_GREEN = "\033[32;1m"
-COLOR_ORANGE = "\033[33;1m"
-COLOR_MAGENTA = "\033[35;1m"
-
-COLOR_DEFAULT = "\033[m"
-COLOR_DESCRIPTION = COLOR_MAGENTA
-COLOR_VALUE = COLOR_GREEN
-COLOR_WARNING = COLOR_RED
-
-# if not sys.stdout.isatty():
-#    COLOR_DEFAULT = ''
-#    COLOR_DESCRIPTION = ''
-#    COLOR_VALUE = ''
-#    COLOR_WARNING = ''
-
-
-def addColor(description, value, color=COLOR_VALUE, sep=": "):
-    return "".join(
-        (
-            COLOR_DESCRIPTION,
-            description,
-            COLOR_DEFAULT,
-            sep,
-            color,
-            value,
-            COLOR_DEFAULT,
-        )
-    )
-
 
 # define some constants for zipfiles,
 # needed to get the interesting bits from zipped objects, for further details take a look at
@@ -98,11 +68,7 @@ def getAttributes(infoObject):
 
 
 def error(arg, cause=None, label="    ERROR"):
-    msg = addColor(label, arg, color=COLOR_WARNING)
-    if cause:
-        logging.exception(msg)
-    else:
-        logging.error(msg)
+    util.error(arg, cause, label)
     global errorFound
     errorFound = True
     if EXIT_ON_FIRST_ERROR:
@@ -110,8 +76,7 @@ def error(arg, cause=None, label="    ERROR"):
 
 
 def info(msg, label="INFO"):
-    full_msg = addColor(label, msg)
-    logging.info(full_msg)
+    util.info(msg, label)
 
 
 def checkZipfile(zipfilename):
