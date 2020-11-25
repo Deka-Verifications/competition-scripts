@@ -2,10 +2,6 @@ stages:
   - imagesUser
   - imagesTest
 
-include:
-  # Run CI for default branch, tags, and merge requests (not for other branches)
-  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
-
 variables:
   GIT_DEPTH: "1"
   GIT_STRATEGY: fetch
