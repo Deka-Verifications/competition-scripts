@@ -15,9 +15,9 @@ variables:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --dockerfile $CI_PROJECT_DIR/$DOCKERFILE --destination $CI_REGISTRY_IMAGE/$IMAGE
   only:
-    - schedules
     refs:
       - masters
+      - schedules
 
 build-docker:python:latest:
   extends: .build-docker
