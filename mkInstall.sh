@@ -18,12 +18,6 @@ if [ -z $VERIFIER ]; then
   exit 1;
 fi
 
-# Prepare provenance info
-PROVENANCEVERIFIER=${ARCHIVE/.zip/-provenance.txt};
-echo "Archive: ${VERIFIER}.zip  SHA1: "`shasum ${ARCHIVE} | sed "s/\(.\{10\}\).*/\1/"`"..." > ${PROVENANCEVERIFIER};
-echo "on `date -Iminutes`" >> ${PROVENANCEVERIFIER};
-echo "" >> ${PROVENANCEVERIFIER};
-
 # Unzip
 echo "Installing $ARCHIVE ...";
 rm -rf ./bin/${VERIFIER};
