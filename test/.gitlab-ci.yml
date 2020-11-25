@@ -16,7 +16,7 @@ variables:
     - /kaniko/executor --dockerfile $CI_PROJECT_DIR/$DOCKERFILE --destination $CI_REGISTRY_IMAGE/$IMAGE
   only:
     refs:
-      - masters
+      - master
       - schedules
 
 build-docker:python:latest:
