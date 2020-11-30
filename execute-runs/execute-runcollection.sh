@@ -49,17 +49,16 @@ make -f "$ROOT_DIR/Makefile" "bin/$TOOL"
 
 echo ""
 echo "  Executing $TOOL"
-(
-  cd "bin/$TOOL";
-  if [[ ! -e $OUTPUT_DIR ]]; then
-    echo "Output folder $OUTPUT_DIR does not exist."
-    exit 1
-  fi
-  TMP_FILE=$(mktemp --suffix=-provenance.txt)
-  $SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
-  $BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
-  rm "$TMP_FILE"
-)
+
+cd "bin/$TOOL";
+if [[ ! -e $OUTPUT_DIR ]]; then
+  echo "Output folder $OUTPUT_DIR does not exist."
+  exit 1
+fi
+TMP_FILE=$(mktemp --suffix=-provenance.txt)
+$SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
+$BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
+rm "$TMP_FILE"
 
 echo ""
 echo "  Post-processing $TOOL"
