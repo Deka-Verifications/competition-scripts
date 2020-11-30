@@ -36,10 +36,6 @@ if [[ ! -e "$ROOT_DIR/benchmark-defs/$BENCHMARK_DEFINITION_FILE" ]]; then
   echo "Benchmark definition $BENCHMARK_DEFINITION_FILE not found."
   exit 1
 fi
-if [[ ! -e $OUTPUT_DIR ]]; then
-  echo "Output folder $OUTPUT_DIR does not exist."
-  exit 1
-fi
 
 if [[ $WAIT_TIME -gt 0 ]]; then
   echo "$TOOL with benchmark definition $BENCHMARK_DEFINITION_FILE waits $WAIT_TIME seconds first.";
@@ -55,6 +51,10 @@ echo ""
 echo "  Executing $TOOL"
 (
   cd "bin/$TOOL";
+  if [[ ! -e $OUTPUT_DIR ]]; then
+    echo "Output folder $OUTPUT_DIR does not exist."
+    exit 1
+  fi
   TMP_FILE=$(mktemp --suffix=-provenance.txt)
   $SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
   $BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
