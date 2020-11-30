@@ -57,7 +57,7 @@ echo "  Executing $TOOL"
   cd "bin/$TOOL";
   TMP_FILE=$(mktemp --suffix=-provenance.txt)
   $SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
-  $BENCHEXEC_COMMAND "$ROOT_DIR/benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
+  $BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
   rm "$TMP_FILE"
 )
 
