@@ -9,12 +9,12 @@
 # @title Write provenance information to config file
 # @description Prepare Phase: write info about competition and components used to file
 
-DIR=$(dirname "$0")
+DIR=$(realpath $(dirname "$0"))
 VERIFIER=$1
-COMPETITIONNAME=$($DIR/parseInitConfig.py --get-comp $DIR/../benchmark-defs/category-structure.yml)
-YEAR=$($DIR/parseInitConfig.py --get-year $DIR/../benchmark-defs/category-structure.yml)
+COMPETITIONNAME=$($DIR/../parseInitConfig.py --get-comp $DIR/../../benchmark-defs/category-structure.yml)
+YEAR=$($DIR/../parseInitConfig.py --get-year $DIR/../../benchmark-defs/category-structure.yml)
 TARGETSERVER=$(echo $COMPETITIONNAME | tr [:upper:] [:lower:])
-ARCHIVE="$DIR/../archives/$YEAR/$VERIFIER.zip"
+ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"
 GIT_REPOS="archives sv-benchmarks benchexec scripts"
 
 if [ -z $VERIFIER ]; then
@@ -31,7 +31,7 @@ echo "on `date -Iminutes`"
 echo "based on the components"
 for repo in $GIT_REPOS; do
   (
-  cd "$DIR/../$repo"
+  cd "$DIR/../../$repo"
   echo "`git remote get-url origin`  `git describe --long --always`"
   )
 done
