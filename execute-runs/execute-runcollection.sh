@@ -13,6 +13,7 @@
 #   witness name
 #   witness glob suffix
 #   output directory
+#   waiting time (optional)
 
 BENCHEXEC_COMMAND=$1
 TOOL=$2
@@ -20,6 +21,7 @@ BENCHMARK_DEFINITION_FILE=$3
 WITNESS_TARGET=$4
 WITNESS_GLOB_SUFFIX=$5
 OUTPUT_DIR=$6
+WAIT_TIME=$((($7 - 1) * 60 + 10));
 SCRIPTS_DIR=$(realpath $(dirname "$0"))
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
 PYTHONPATH="$ROOT_DIR/benchexec"
@@ -38,6 +40,12 @@ if [[ ! -e $OUTPUT_DIR ]]; then
   echo "Output folder $OUTPUT_DIR does not exist."
   exit 1
 fi
+
+if [[ $WAIT_TIME -gt 0 ]]; then
+  echo "$TOOL with benchmark definition $BENCHMARK_DEFINITION_FILE waits $WAIT_TIME seconds first.";
+  sleep $WAIT_TIME;
+fi
+
 
 echo ""
 echo "  Installing $TOOL"
