@@ -19,9 +19,12 @@ def get_sha256_from_file(file_name):
     # map the file content into virtual memory and hash from there
     # - this avoids unnecessary reads.
     # cf. https://stackoverflow.com/a/62214783/3012884
-    with open(file_name, "rb") as i:
-        with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
-            return hashlib.sha256(mm).hexdigest()
+    try:
+        with open(file_name, "rb") as i:
+            with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
+                return hashlib.sha256(mm).hexdigest()
+    except ValueError:
+        return hashlib.sha256().hexdigest()
 
 
 def handle_file(i, root_dir):
