@@ -4,6 +4,7 @@ import os
 from functools import partial
 import glob
 import json
+import mmap
 import sys
 import hashlib
 import multiprocessing as mp
@@ -15,9 +16,21 @@ import _logging as logging
 
 
 def get_sha256_from_file(file_name):
+    def create_hash(content):
+        return hashlib.sha256(content).hexdigest()
+
     with open(file_name, "rb") as i:
-        text = i.read()
-    return hashlib.sha256(text).hexdigest()
+        try:
+            # map the file content into virtual memory and hash from there
+            # - this avoids unnecessary reads.
+            # cf. https://stackoverflow.com/a/62214783/3012884
+            with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
+                return create_hash(mm)
+        except ValueError:
+            logging.debug(
+                "mmap can't map %s for hashing. Falling back to default read", file_name
+            )
+            return create_hash(i.read())
 
 
 def handle_file(i, root_dir):
@@ -77,7 +90,9 @@ def write_hashmap(output_file, directories, root_dir, target_file_glob):
                 assert all(
                     k not in hashes or hashes[k] == v for k, v in h.items()
                 ), "Duplicate key: %s and %s" % next(
-                    (k, v) for k, v in h.items() if k in hashes and hashes[k] != v
+                    ((k, v), hashes[k])
+                    for k, v in h.items()
+                    if k in hashes and hashes[k] != v
                 )
                 hashes.update(h)
     with open(hashes_file, "w+") as outp:
