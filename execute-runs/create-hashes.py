@@ -4,6 +4,7 @@ import os
 from functools import partial
 import glob
 import json
+import mmap
 import sys
 import hashlib
 import multiprocessing as mp
@@ -15,14 +16,12 @@ import _logging as logging
 
 
 def get_sha256_from_file(file_name):
-    file_hash = hashlib.sha256()
+    # map the file content into virtual memory and hash from there
+    # - this avoids unnecessary reads.
+    # cf. https://stackoverflow.com/a/62214783/3012884
     with open(file_name, "rb") as i:
-        while True:
-            chunk = i.read(8192)
-            if not chunk:
-                break
-            file_hash.update(chunk)
-    return file_hash.hexdigest()
+        with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
+            return hashlib.sha256(mm).hexdigest()
 
 
 def handle_file(i, root_dir):
