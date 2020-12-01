@@ -77,7 +77,9 @@ def write_hashmap(output_file, directories, root_dir, target_file_glob):
                 assert all(
                     k not in hashes or hashes[k] == v for k, v in h.items()
                 ), "Duplicate key: %s and %s" % next(
-                    (k, v) for k, v in h.items() if k in hashes and hashes[k] != v
+                    ((k, v), hashes[k])
+                    for k, v in h.items()
+                    if k in hashes and hashes[k] != v
                 )
                 hashes.update(h)
     with open(hashes_file, "w+") as outp:
