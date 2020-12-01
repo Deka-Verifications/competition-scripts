@@ -16,17 +16,21 @@ import _logging as logging
 
 
 def get_sha256_from_file(file_name):
-    # map the file content into virtual memory and hash from there
-    # - this avoids unnecessary reads.
-    # cf. https://stackoverflow.com/a/62214783/3012884
-    try:
-        with open(file_name, "rb") as i:
+    def create_hash(content):
+        return hashlib.sha256(content).hexdigest()
+
+    with open(file_name, "rb") as i:
+        try:
+            # map the file content into virtual memory and hash from there
+            # - this avoids unnecessary reads.
+            # cf. https://stackoverflow.com/a/62214783/3012884
             with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
-                return hashlib.sha256(mm).hexdigest()
-    except ValueError:
-        # mmap can't map file_name. We assume that this means that
-        # the file is empty, so we create the hash for the empty word.
-        return hashlib.sha256().hexdigest()
+                return create_hash(mm)
+        except ValueError:
+            logging.debug(
+                "mmap can't map %s for hashing. Falling back to default read", file_name
+            )
+            return create_hash(i.read())
 
 
 def handle_file(i, root_dir):
