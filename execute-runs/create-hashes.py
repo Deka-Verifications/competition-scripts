@@ -24,6 +24,8 @@ def get_sha256_from_file(file_name):
             with mmap.mmap(i.fileno(), 0, prot=mmap.PROT_READ) as mm:
                 return hashlib.sha256(mm).hexdigest()
     except ValueError:
+        # mmap can't map file_name. We assume that this means that
+        # the file is empty, so we create the hash for the empty word.
         return hashlib.sha256().hexdigest()
 
 
