@@ -15,9 +15,14 @@ import _logging as logging
 
 
 def get_sha256_from_file(file_name):
+    file_hash = hashlib.sha256()
     with open(file_name, "rb") as i:
-        text = i.read()
-    return hashlib.sha256(text).hexdigest()
+        while True:
+            chunk = i.read(8192)
+            if not chunk:
+                break
+            file_hash.update(chunk)
+    return file_hash.hexdigest()
 
 
 def handle_file(i, root_dir):
