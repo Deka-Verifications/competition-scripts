@@ -48,6 +48,8 @@ RUN apt-get install -y \
        python3-lxml \
        python3-mpi4py \
        python3-numpy \
+       python3-pandas \
+       python3-sklearn \
        python3-setuptools \
        sbcl \
        python-is-python2 \
