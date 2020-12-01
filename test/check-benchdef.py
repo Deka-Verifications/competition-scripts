@@ -159,15 +159,18 @@ def _check_all_sets_used(
     if not categories_expected:
         return [f"No entry in category info"]
 
-    if len(categories_included) > len(categories_expected):
-        return [
-            f"More sets used than expected: {categories_included - categories_expected}"
+    errors = list()
+
+    obsolete_categories = categories_included - categories_expected
+    if obsolete_categories:
+        errors += [
+            f"Sets used that are not defined in category structure: {obsolete_categories}"
         ]
     missing_categories = categories_expected - categories_included - set(exceptions)
 
     if missing_categories:
-        return [f"Missing includes for following sets: {missing_categories}"]
-    return list()
+        errors += [f"Missing includes for following sets: {missing_categories}"]
+    return errors
 
 
 def _perform_checks(xml: Path, category_info, tasks_dir: Path):
