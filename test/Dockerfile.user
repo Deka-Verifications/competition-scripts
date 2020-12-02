@@ -43,6 +43,7 @@ RUN apt-get install -y \
        lcov \
        libc6-dev-i386 \
        libtinfo5 \
+       make \
        openjdk-8-jdk-headless \
        openmpi-bin \
        python3-lxml \
