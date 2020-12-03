@@ -30,6 +30,7 @@ if [[ `find . -mindepth 1 -maxdepth 1 | wc -l` == 1 ]]; then
   DIR="`find . -mindepth 1 -maxdepth 1`";
   mv "${DIR}" "${DIR}__COMP";
   mv "${DIR}__COMP"/* .
+  rmdir "${DIR}__COMP"
 else
   echo "Error: Archive does not contain exactly one folder.";
   exit 1;
