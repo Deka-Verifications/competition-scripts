@@ -45,7 +45,7 @@ fi
 
 echo ""
 echo "  Installing $TOOL"
-$SCRIPTS_DIR/mkInstall.sh "bin/$TOOL"
+$SCRIPTS_DIR/mkInstall.sh "$TOOL"
 
 echo ""
 echo "  Executing $TOOL"
