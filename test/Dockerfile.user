@@ -27,6 +27,7 @@ RUN apt-get install -y \
        openjdk-11-jdk-headless \
        gcc-multilib \
        libgomp1 \
+       make \
        clang \
        clang-6.0 \
        clang-9 \
@@ -43,14 +44,13 @@ RUN apt-get install -y \
        lcov \
        libc6-dev-i386 \
        libtinfo5 \
-       make \
        openjdk-8-jdk-headless \
        openmpi-bin \
+       python3-pandas \
+       python3-sklearn \
        python3-lxml \
        python3-mpi4py \
        python3-numpy \
-       python3-pandas \
-       python3-sklearn \
        python3-setuptools \
        sbcl \
        python-is-python2 \
@@ -61,14 +61,14 @@ RUN apt-get install -y \
 # (Fetch latest version from the Ansible configuration for the competition machines:
 #  https://gitlab.com/sosy-lab/admin/sysadmin/ansible/blob/master/roles/benchmarking/tasks/main.yml)
 #
-# Last synchronized: 2020-11-22 from commit 6262a94
+# Last synchronized: 2020-12-05 from commit 670c4eb
 #
 #      #- acpid
 #      #- graphviz
 #      - openjdk-11-jdk-headless
 #      - gcc-multilib # cpp, development headers
 #      - libgomp1 # for Z3
-#      #- make # for fshellw2t
+#      - make # for fshellw2t
 #      - clang # Test-Comp'21 LibKluzzer
 #      #- clang-3.9 # SV-COMP'20 Dartagnan
 #      - clang-6.0 # SV-COMP'21 VeriAbs, Test-Comp'21 LibKluzzer
@@ -95,9 +95,10 @@ RUN apt-get install -y \
 #      #- linux-libc-dev:i386 # SV-COMP'20 CBMC
 #      - openjdk-8-jdk-headless # SV-COMP'20 Ultimate
 #      - openmpi-bin
-#      #- python-sklearn # SV-COMP'20 VeriFuzz
-#      #- python-pandas # SV-COMP'20 VeriFuzz
+#      - python3-pandas # Test-Comp'21 VeriFuzz
+#      - python3-sklearn # Test-Comp'21 VeriFuzz
 #      #- python-pycparser # SV-COMP'19 CSeq
+#      - python3-lxml # Witnesslint
 #      - python3-mpi4py
 #      - python3-numpy # Gidon
 #      - python3-setuptools # SecC
@@ -111,7 +112,7 @@ RUN apt-get install -y \
 #      #- libhtml-parser-perl
 #      #- libdigest-sha-perl
 
-#      - python-is-python2 # ESBMC, VeriAbs
-#      - python2 # Test-Comp'21 VeriFuzz
+#      - python-is-python2 # ESBMC, VeriAbs, PredatorHP
+#      - python2 # Test-Comp'21 VeriFuzz, PredatorHP
 
 
