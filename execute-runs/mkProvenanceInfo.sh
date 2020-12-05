@@ -15,7 +15,7 @@ COMPETITIONNAME=$($DIR/../parseInitConfig.py --get-comp $DIR/../../benchmark-def
 YEAR=$($DIR/../parseInitConfig.py --get-year $DIR/../../benchmark-defs/category-structure.yml)
 TARGETSERVER=$(echo $COMPETITIONNAME | tr [:upper:] [:lower:])
 ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"
-GIT_REPOS="archives sv-benchmarks benchexec scripts"
+GIT_REPOS="archives sv-benchmarks benchexec scripts ."
 
 if [ -z $VERIFIER ]; then
   echo "Error: No verifier specified."
