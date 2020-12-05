@@ -45,7 +45,7 @@ fi
 
 echo ""
 echo "  Installing $TOOL"
-make -f "$ROOT_DIR/Makefile" "bin/$TOOL"
+$SCRIPTS_DIR/mkInstall.sh "bin/$TOOL"
 
 echo ""
 echo "  Executing $TOOL"
