@@ -20,7 +20,7 @@ fi
 
 # Unzip
 echo "Installing $ARCHIVE ...";
-rm -rf ./bin/${VERIFIER};
+rm -rf "./bin/$VERIFIER"/*
 mkdir -p ./bin/${VERIFIER};
 cd ./bin/$VERIFIER;
 unzip $ARCHIVE;
