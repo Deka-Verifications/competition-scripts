@@ -43,14 +43,16 @@ if [[ $WAIT_TIME -gt 0 ]]; then
 fi
 
 
+TOOL_DIR=$(mktemp --directory --tmpdir="./bin/" "$TOOL-XXXXXXXXXX")
+
 echo ""
-echo "  Installing $TOOL"
-$SCRIPTS_DIR/mkInstall.sh "$TOOL"
+echo "  Installing $TOOL in $TOOL_DIR"
+$SCRIPTS_DIR/mkInstall.sh "$TOOL" "$TOOL_DIR"
 
 echo ""
 echo "  Executing $TOOL"
 
-cd "bin/$TOOL";
+cd "$TOOL_DIR";
 if [[ ! -e $OUTPUT_DIR ]]; then
   echo "Output folder $OUTPUT_DIR does not exist."
   exit 1
@@ -59,6 +61,7 @@ TMP_FILE=$(mktemp --suffix=-provenance.txt)
 $SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
 $BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
 rm "$TMP_FILE"
+#rm -rf "$TOOL_DIR"
 
 echo ""
 echo "  Post-processing $TOOL"

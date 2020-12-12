@@ -9,20 +9,19 @@
 # @title Install Tool Archive
 # @description Unzips and checks the structure of tool archive.
 
-VERIFIER=$1;
+TOOL=$1;
+TOOL_DIR=$2;
 YEAR=`scripts/parseInitConfig.py --get-year benchmark-defs/category-structure.yml`;
-ARCHIVE="`pwd`/archives/${YEAR}/${VERIFIER}.zip";
+ARCHIVE="`pwd`/archives/${YEAR}/${TOOL}.zip";
 
-if [ -z $VERIFIER ]; then
-  echo "Error: No verifier specified.";
+if [[ -z "$TOOL" || -z "$TOOL_DIR" ]]; then
+  echo "Usage: $0 <tool> <install directory>"
   exit 1;
 fi
 
 # Unzip
 echo "Installing $ARCHIVE ...";
-rm -rf "./bin/$VERIFIER"/*
-mkdir -p ./bin/${VERIFIER};
-cd ./bin/$VERIFIER;
+cd "$TOOL_DIR";
 unzip $ARCHIVE;
 # Check structure
 if [[ `find . -mindepth 1 -maxdepth 1 | wc -l` == 1 ]]; then
