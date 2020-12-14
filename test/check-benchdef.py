@@ -173,12 +173,30 @@ def _check_all_sets_used(
     return errors
 
 
+def _check_verifier_listed_in_category_info(xml: Path, category_info):
+    verifier = _get_verifier_name(xml)
+    if "validate" in verifier:
+        return []
+
+    participants_key = "verifiers"
+    not_participating_key = "not_participating"
+    participating = category_info[participants_key]
+    not_participating = category_info[not_participating_key]
+
+    if verifier not in participating and verifier not in not_participating:
+        return [
+            f"Verifier not listed in category_structure.yml. Add either to '{participants_key}' or to '{not_participating_key}'"
+        ]
+    return []
+
+
 def _perform_checks(xml: Path, category_info, tasks_dir: Path):
     util.info(str(xml), label="CHECKING")
     xml_errors = _check_valid(xml)
     if xml_errors:
         return xml_errors
     errors = _check_task_defs_match_set(xml, tasks_dir=tasks_dir)
+    errors += _check_verifier_listed_in_category_info(xml, category_info)
     if tasks_dir.exists() and not "validate" in xml.name:
         errors += _check_all_sets_used(
             xml,
