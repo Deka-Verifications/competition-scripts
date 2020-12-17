@@ -44,6 +44,13 @@ def _check_info_consistency(category_info: dict) -> Iterable[str]:
     if len(categories_used) < len(in_process_order | in_table_order):
         yield f"Categories used in process or table order, but missing in meta categories: {(in_process_order | in_table_order) - categories_used}"
 
+    for opt in ("opt_in", "opt_out"):
+        for category in {
+            c for categories in category_info[opt].values() for c in categories
+        }:
+            if category not in categories_used:
+                yield f"Category used in {opt}, but missing in meta categories: {category}"
+
 
 def _get_prop_name(property_file) -> str:
     if isinstance(property_file, Path):
