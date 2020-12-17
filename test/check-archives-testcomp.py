@@ -236,8 +236,6 @@ def _checkToolInfoModule(toolname, config):
 
     try:
         programFiles = list(tool.program_files(exe))
-        if not programFiles:
-            error("tool '%s' has no program files" % toolname)
     except Exception as e:
         error(f"querying program files failed for {toolname}", cause=e)
 
