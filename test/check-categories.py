@@ -96,10 +96,25 @@ def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable
                 yield f"No task for properties {expected_props} in category {b} (set file: {existing_set})"
 
 
-def check_categories(category_info: dict, tasks_dir: Path) -> Iterable[str]:
+def _check_category_participants(
+    category_info: dict, participants: Iterable[str]
+) -> Iterable[str]:
+    participants = set(participants)
+    for name, c in category_info["categories"].items():
+        not_participating = set(c["verifiers"]) - participants
+        if not_participating:
+            yield f"Verifiers listed in category {name}, but not participating: {not_participating}"
+
+
+def check_categories(
+    category_info: dict, tasks_dir: Path, participants: Iterable[str]
+) -> Iterable[str]:
     errors = _check_info_consistency(category_info)
     errors = itertools.chain(
         errors, _check_categories_nonempty(category_info, tasks_dir)
+    )
+    errors = itertools.chain(
+        errors, _check_category_participants(category_info, participants)
     )
     return errors
 
@@ -138,7 +153,8 @@ def main(argv=None):
     args = parse_args(argv)
 
     category_info = util.parse_yaml(args.category_structure)
-    errors = check_categories(category_info, args.tasks_base_dir)
+    participants = category_info["verifiers"]
+    errors = check_categories(category_info, args.tasks_base_dir, participants)
     success = True
     for msg in errors:
         success = False
