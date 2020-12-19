@@ -45,6 +45,8 @@ def _check_info_consistency(category_info: dict) -> Iterable[str]:
         yield f"Categories used in process or table order, but missing in meta categories: {(in_process_order | in_table_order) - categories_used}"
 
     for opt in ("opt_in", "opt_out"):
+        if opt not in category_info or not category_info[opt]:
+            continue  # no opt_in or opt_out in category info
         for category in {
             c for categories in category_info[opt].values() for c in categories
         }:
