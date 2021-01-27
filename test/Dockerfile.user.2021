@@ -4,19 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Build Docker image via GitLab CI.
-# Commands for manually updating the image:
-# (1) docker build --pull -t registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/user:latest - < Dockerfile.user
-# (2) Create a Gitlab token under https://gitlab.com/profile/personal_access_tokens
-#     - Name: "docker-competition" or so
-#     - ExpiresAt: e.g., 2021-09-23
-#     - Scope: API is sufficient
-#     IMPORTANT: Remember new secret token!
-# (3) docker login registry.gitlab.com
-#     - Username=dbeyer
-#     - Password: above-generated secret token
-# (4) docker push registry.gitlab.com/sosy-lab/benchmarking/competition-scripts/user:latest
-
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y tzdata
