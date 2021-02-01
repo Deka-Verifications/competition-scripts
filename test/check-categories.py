@@ -107,6 +107,41 @@ def _check_category_participants(
         if not_participating:
             yield f"Verifiers listed in category {name}, but not participating: {not_participating}"
 
+    yield from _check_participant_order(category_info)
+
+
+def is_java_participant(category_info: dict, name: str) -> bool:
+    for c in category_info["categories"].values():
+        props = c["properties"]
+        if isinstance(props, str):
+            props = [props]
+        if any(p.endswith("_java") for p in props) and name in c["verifiers"]:
+            return True
+    return False
+
+
+def _check_participant_order(category_info: dict) -> Iterable[str]:
+    def out_of_order(li) -> bool:
+        verifiers_c = [v for v in li if not is_java_participant(category_info, v)]
+        verifiers_java = [v for v in li if is_java_participant(category_info, v)]
+        assert all(v not in verifiers_java for v in verifiers_c)
+        return not (
+            sorted(verifiers_c) == verifiers_c
+            and sorted(verifiers_java) == verifiers_java
+        )
+
+    def verifier_list(vs) -> str:
+        return ", ".join(vs)
+
+    verifiers = category_info["verifiers"]
+    if out_of_order(verifiers):
+        yield f"Verifiers not in lexicographic order: {verifier_list(verifiers)}"
+
+    for category, info in category_info["categories"].items():
+        verifiers = info["verifiers"]
+        if out_of_order(verifiers):
+            yield f"{category}: Verifiers not in lexicographic order: {verifier_list(verifiers)}"
+
 
 def check_categories(
     category_info: dict, tasks_dir: Path, participants: Iterable[str]
