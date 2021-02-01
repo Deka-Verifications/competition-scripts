@@ -126,8 +126,8 @@ def _check_participant_order(category_info: dict) -> Iterable[str]:
         verifiers_java = [v for v in li if is_java_participant(category_info, v)]
         assert all(v not in verifiers_java for v in verifiers_c)
         return not (
-            sorted(verifiers_c) == verifiers_c
-            and sorted(verifiers_java) == verifiers_java
+            sorted(verifiers_c, key=lambda v: v.lower()) == verifiers_c
+            and sorted(verifiers_java, key=lambda v: v.lower()) == verifiers_java
             and li == verifiers_c + verifiers_java
         )
 
