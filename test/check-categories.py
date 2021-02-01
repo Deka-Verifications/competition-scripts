@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import argparse
+from collections import namedtuple, defaultdict
 import logging
 from pathlib import Path
 import sys
-from typing import Iterable
+from typing import Iterable, Optional
 import itertools
 import _util as util
 
@@ -60,20 +61,34 @@ def _get_prop_name(property_file) -> str:
     return _get_prop_name(Path(property_file))
 
 
-def _is_category_empty(set_file: Path, prop: str) -> Iterable[str]:
+def get_setfile_tasks(set_file: Path) -> Iterable[Path]:
     with open(set_file) as inp:
         globs = [
             line.strip()
             for line in inp.readlines()
             if line.strip() and not line.strip().startswith("#")
         ]
-    tasks = (t for g in globs for t in set_file.parent.glob(g))
-    for t in tasks:
-        task_yaml = util.parse_yaml(t)
-        props = (_get_prop_name(p["property_file"]) for p in task_yaml["properties"])
-        if prop in props:
+    return (t for g in globs for t in set_file.parent.glob(g))
+
+
+def get_properties_of_task(task_file: Path) -> Iterable[str]:
+    task_yaml = util.parse_yaml(task_file)
+    properties = task_yaml["properties"]
+    if not isinstance(properties, list):
+        properties = [properties]
+    return (_get_prop_name(p["property_file"]) for p in properties)
+
+
+def _is_category_empty(set_file: Path, prop: str) -> Iterable[str]:
+    for t in get_setfile_tasks(set_file):
+        if prop in get_properties_of_task(t):
             return False
     return True
+
+
+def get_set_for_category(set_name: str, tasks_dir: Path) -> Optional[Path]:
+    expected_sets = [tasks_dir / lang / set_name for lang in ("c", "java")]
+    return next((s for s in expected_sets if s.exists()), None)
 
 
 def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable[str]:
@@ -89,10 +104,9 @@ def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable
         for b in base_categories:
             name = util.get_category_name(b)
             set_name = name + ".set"
-            expected_sets = [tasks_dir / lang / set_name for lang in ("c", "java")]
-            existing_set = next((s for s in expected_sets if s.exists()), None)
+            existing_set = get_set_for_category(set_name, tasks_dir)
             if not existing_set:
-                yield f"Set missing. Expected any of the following: {[str(s) for s in expected_sets]}"
+                yield f"Set missing for {set_name}"
                 continue
             if all((_is_category_empty(existing_set, prop) for prop in expected_props)):
                 yield f"No task for properties {expected_props} in category {b} (set file: {existing_set})"
@@ -119,6 +133,50 @@ def check_categories(
         errors, _check_category_participants(category_info, participants)
     )
     return errors
+
+
+def check_all_tasks_used(tasks_dir: Path, category_info: dict) -> Iterable[str]:
+    used_directories = defaultdict(set)
+    for info in category_info["categories"].values():
+        properties = info["properties"]
+        if not isinstance(properties, list):
+            properties = [properties]
+
+        PropAndCat = namedtuple("PropAndCat", ["property", "category"])
+        # by checking that there's a '.' in the category name,
+        # we only check base categories and ignore other meta categories
+        # that are used as sub-categories of the current meta category.
+        used_categories = [
+            PropAndCat(*c.split(".")) for c in info["categories"] if "." in c
+        ]
+
+        for prop in properties:
+            used_set_files = [
+                get_set_for_category(c.category + ".set", tasks_dir)
+                for c in used_categories
+                if c.property == prop
+            ]
+            assert (
+                None not in used_set_files
+            )  # should be ensured by previous _check_categories_nonempty
+            used_directories[prop] |= {
+                t.parent
+                for set_file in used_set_files
+                for t in get_setfile_tasks(set_file)
+            }
+
+    all_set_files = tasks_dir.glob("**/*.set")
+    logging.debug("Used directories per property: %s", used_directories)
+    for prop, used_dirs in used_directories.items():
+        covered_directories = used_dirs.copy()
+        tasks = (t for set_file in all_set_files for t in get_setfile_tasks(set_file))
+        for t in tasks:
+            task_parent_dir = t.parent
+            if task_parent_dir in covered_directories:
+                continue
+            if prop in get_properties_of_task(t):
+                covered_directories.add(task_parent_dir)
+                yield f"For property {prop}, the following directory is not used: {task_parent_dir}"
 
 
 def parse_args(argv):
@@ -157,6 +215,9 @@ def main(argv=None):
     category_info = util.parse_yaml(args.category_structure)
     participants = category_info["verifiers"]
     errors = check_categories(category_info, args.tasks_base_dir, participants)
+    errors = itertools.chain(
+        errors, check_all_tasks_used(args.tasks_base_dir, category_info)
+    )
     success = True
     for msg in errors:
         success = False

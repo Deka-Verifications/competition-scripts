@@ -49,8 +49,12 @@ def info(msg, label="INFO"):
 
 
 def parse_yaml(yaml_file):
-    with open(yaml_file) as inp:
-        return yaml.safe_load(inp)
+    try:
+        with open(yaml_file) as inp:
+            return yaml.safe_load(inp)
+    except yaml.scanner.ScannerError as e:
+        logging.error("Exception while scanning %s", yaml_file)
+        raise e
 
 
 def verifiers_in_category(category_info, category):
