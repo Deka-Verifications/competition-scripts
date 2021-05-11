@@ -265,10 +265,6 @@ if __name__ == "__main__":
 
     # check each file in the directory
     for filename in sorted(os.listdir(directory)):
-        # skip filenames starting with dummy. These are dummy archives.
-        if filename.startswith("dummy-"):
-            util.info(f"{filename}", label="SKIP")
-            continue
         fullname = os.path.join(directory, filename)
         info(filename, label="CHECKING")
         if not os.path.isfile(fullname):
