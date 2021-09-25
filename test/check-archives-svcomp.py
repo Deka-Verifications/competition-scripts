@@ -12,6 +12,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 import logging
+import benchexec
 from benchexec import model
 from benchexec.tools.template import BaseTool2
 from subprocess import call
@@ -257,6 +258,10 @@ if __name__ == "__main__":
     if not os.path.isdir(directory):
         error("directory '{}' not found".format(directory))
         sys.exit(1 if errorFound else 0)
+
+    print(
+        f"This script checks all archives in directory '{directory}' with\n\tPython {sys.version}\n\tand BenchExec {benchexec.__version__}"
+    )
 
     # dummy config. this script is meant to be executed by the CI,
     # so no need to run it in an extra container:
