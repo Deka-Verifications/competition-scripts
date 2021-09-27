@@ -27,7 +27,7 @@ EXIT_ON_FIRST_ERROR = False  # or collect all errors?
 
 VALIDATOR_SUFFIXES = ["-validate-test-suites"]
 BENCHMARK_DEF_TEMPLATE = (
-    "https://gitlab.com/sosy-lab/test-comp/bench-defs/raw/master/benchmark-defs/%s.xml"
+    "https://gitlab.com/sosy-lab/test-comp/bench-defs/raw/main/benchmark-defs/%s.xml"
 )
 DEF_MISSING_ERROR = "file '%s' not available. Please rename the archive to match an existing benchmark definition, or add a new benchmark definition at 'https://gitlab.com/sosy-lab/test-comp/bench-defs'."
 
