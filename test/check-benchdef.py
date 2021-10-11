@@ -265,6 +265,7 @@ def main(argv=None):
 
     category_info = util.parse_yaml(args.category_structure)
     java_verifiers = util.verifiers_in_category(category_info, "JavaOverall")
+    java_validators = util.validators_in_category(category_info, "JavaOverall")
     unmaintained = util.unused_verifiers(category_info)
     success = True
     if not args.tasks_base_dir or not args.tasks_base_dir.exists():
@@ -278,7 +279,7 @@ def main(argv=None):
         if bench_def.is_dir():
             util.info(str(bench_def) + " (is directory)", label="SKIP")
             continue
-        if bench_def.name in java_verifiers:
+        if bench_def.name in java_verifiers or bench_def.name in java_validators:
             tasks_directory = args.tasks_base_dir / "java"
         else:
             tasks_directory = args.tasks_base_dir / "c"

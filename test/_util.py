@@ -59,9 +59,27 @@ def parse_yaml(yaml_file):
 
 def verifiers_in_category(category_info, category):
     categories = category_info["categories"]
-    if category not in categories:
-        return []
-    return [v + ".xml" for v in categories[category]["verifiers"]]
+    selected = categories.get(category, {})
+    return [v + ".xml" for v in selected.get("verifiers", [])]
+
+
+def validators_in_category(category_info, category):
+    categories = category_info["categories"]
+    selected = categories.get(category, {})
+    validators = []
+    # Construction of the bench-def.xml is according to this pattern,
+    # based on how category-structure.yml names validators:
+    # 1. toolname-violation -> toolname-validate-violation-witnesses.xml
+    # 2. toolname-correctness -> toolname-validate-correctness-witnesses.xml
+    # 3. toolname only -> toolname-validate-witnesses.xml
+    for validator in selected.get("validators", []):
+        try:
+            tool_name, validation_type = validator.rsplit("-")
+            validators.append(f"{tool_name}-validate-{validation_type}-witnesses.xml")
+        except ValueError:
+            tool_name = validator
+            validators.append(f"{tool_name}-validate-witnesses.xml")
+    return validators
 
 
 def unused_verifiers(category_info):
