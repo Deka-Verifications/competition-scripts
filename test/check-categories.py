@@ -142,7 +142,7 @@ def _check_participant_order(category_info: dict) -> Iterable[str]:
         return not (
             sorted(verifiers_c, key=lambda v: v.lower()) == verifiers_c
             and sorted(verifiers_java, key=lambda v: v.lower()) == verifiers_java
-            and li == verifiers_c + verifiers_java
+            and list(li) == list(verifiers_c) + list(verifiers_java)
         )
 
     def verifier_list(vs) -> str:
