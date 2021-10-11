@@ -135,27 +135,30 @@ def is_java_participant(category_info: dict, name: str) -> bool:
 
 
 def _check_participant_order(category_info: dict) -> Iterable[str]:
-    def out_of_order(li) -> bool:
-        verifiers_c = [v for v in li if not is_java_participant(category_info, v)]
-        verifiers_java = [v for v in li if is_java_participant(category_info, v)]
+    def sort(verifiers) -> bool:
+        return sorted(verifiers, key=lambda v: v.lower())
+
+    def out_of_order(verifiers):
+        verifiers_c = [
+            v for v in verifiers if not is_java_participant(category_info, v)
+        ]
+        verifiers_java = [v for v in verifiers if is_java_participant(category_info, v)]
         assert all(v not in verifiers_java for v in verifiers_c)
-        return not (
-            sorted(verifiers_c, key=lambda v: v.lower()) == verifiers_c
-            and sorted(verifiers_java, key=lambda v: v.lower()) == verifiers_java
-            and list(li) == list(verifiers_c) + list(verifiers_java)
-        )
+        for vs in (verifiers_c, verifiers_java):
+            if sort(vs) != vs:
+                yield f"Verifiers not in lexicographic order: {verifier_list(vs)}. Should be {verifier_list(sort(vs))}"
+        if list(verifiers) != (list(verifiers_c) + list(verifiers_java)):
+            yield f"Inconsistency in verifier list: All C verifiers have to preceed Java verifiers:\n[{verifier_list(verifiers)}].\nVerifiers C:\n[{verifier_list(verifiers_c)}].\nVerifiers Java:\n[{verifier_list(verifiers_java)}]."
 
     def verifier_list(vs) -> str:
         return ", ".join(vs)
 
     verifiers = category_info["verifiers"]
-    if out_of_order(verifiers):
-        yield f"Verifiers not in lexicographic order: {verifier_list(verifiers)}"
+    yield from out_of_order(verifiers)
 
     for category, info in category_info["categories"].items():
         verifiers = info["verifiers"]
-        if out_of_order(verifiers):
-            yield f"{category}: Verifiers not in lexicographic order: {verifier_list(verifiers)}"
+        yield from [f"{category}: {msg}" for msg in out_of_order(verifiers)]
 
 
 def check_categories(
