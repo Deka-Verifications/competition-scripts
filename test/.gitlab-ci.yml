@@ -32,15 +32,25 @@ build-docker:python:latest:
     changes:
       - "test/Dockerfile.python"
 
+build-docker:user:2022:
+  extends: .build-docker
+  stage: imagesUser
+  variables:
+    DOCKERFILE: test/Dockerfile.user.2022
+    IMAGE: user:2022
+    # For the next year's competition, create a new build job and make sure that
+    # the following line exists only in the job for the latest image.
+    EXTRA_ARGS: "--destination $CI_REGISTRY_IMAGE/user:latest"
+  only:
+    changes:
+      - "test/Dockerfile.user.2022"
+
 build-docker:user:2021:
   extends: .build-docker
   stage: imagesUser
   variables:
     DOCKERFILE: test/Dockerfile.user.2021
     IMAGE: user:2021
-    # For the next year's competition, create a new build job and make sure that
-    # the following line exists only in the job for the latest image.
-    EXTRA_ARGS: "--destination $CI_REGISTRY_IMAGE/user:latest"
   only:
     changes:
       - "test/Dockerfile.user.2021"
