@@ -22,6 +22,28 @@ def year(config, abbrev=False) -> str:
     return str(year)
 
 
+def participant_table(config) -> str:
+    columns = {
+        "name": lambda d: d.get("name", ""),
+        "lang": lambda d: d.get("lang", ""),
+        "url": lambda d: d.get("url", ""),
+        "required-ubuntu-packages": lambda d: ",".join(
+            d.get("required-ubuntu-packages", [])
+        ),
+        "jury-member-name": lambda d: d.get("jury-member", {}).get("name", ""),
+        "jury-member-affiliation": lambda d: d.get("jury-member", {}).get(
+            "affiliation", ""
+        ),
+        "jury-member-url": lambda d: d.get("jury-member", {}).get("url", ""),
+    }
+    table = ["\t".join(columns.keys())]
+    for metadata in config["verifiers"].values():
+        structured_data = [columns[c](metadata) for c in columns]
+        metadata_as_tsv = "\t".join([e if e else "" for e in structured_data])
+        table.append(metadata_as_tsv)
+    return "\n".join(table)
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
@@ -42,9 +64,17 @@ def main(argv=None):
         default=False,
         help="get year in two digits (YY)",
     )
+    parser.add_argument(
+        "--get-participant-table",
+        action="store_true",
+        default=False,
+        help="get table-seperated table of participant metadata",
+    )
     args = parser.parse_args(argv)
 
-    if not any((args.get_comp, args.get_year, args.get_year_abbrev)):
+    if not any(
+        (args.get_comp, args.get_year, args.get_year_abbrev, args.get_participant_table)
+    ):
         print("Nothing to do", file=sys.stderr)
         return 1
 
@@ -55,6 +85,8 @@ def main(argv=None):
         print_competition(config)
     if args.get_year or args.get_year_abbrev:
         print(year(config, abbrev=args.get_year_abbrev))
+    if args.get_participant_table:
+        print(participant_table(config))
 
 
 if __name__ == "__main__":
