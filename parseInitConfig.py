@@ -48,7 +48,7 @@ def main(argv=None):
         print("Nothing to do", file=sys.stderr)
         return 1
 
-    with open(args.config_file) as inp:
+    with open(args.config_file, encoding="UTF-8") as inp:
         config = yaml.safe_load(inp)
 
     if args.get_comp:
