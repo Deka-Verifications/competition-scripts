@@ -26,7 +26,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     parser = argparse.ArgumentParser()
-    parser.add_argument("config_file", help="config.yml to parse")
+    parser.add_argument("config_file", help="category-structure.yml to parse")
     parser.add_argument(
         "--get-comp", action="store_true", default=False, help="get competition"
     )
