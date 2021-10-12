@@ -31,9 +31,10 @@ def participant_table(config) -> str:
             d.get("required-ubuntu-packages", [])
         ),
         "jury-member-name": lambda d: d.get("jury-member", {}).get("name", ""),
-        "jury-member-affiliation": lambda d: d.get("jury-member", {}).get(
-            "affiliation", ""
+        "jury-member-institution": lambda d: d.get("jury-member", {}).get(
+            "institution", ""
         ),
+        "jury-member-country": lambda d: d.get("jury-member", {}).get("country", ""),
         "jury-member-url": lambda d: d.get("jury-member", {}).get("url", ""),
     }
     table = ["\t".join(columns.keys())]
