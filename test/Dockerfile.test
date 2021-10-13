@@ -25,10 +25,11 @@ RUN apt-get update && apt-get install -y \
   python3-yaml \
   git \
   make \
+  moreutils \
   wget \
   unzip
 
-RUN pip3 install lxml pyyaml
+RUN pip3 install lxml pyyaml yq
 
 RUN git clone https://gitlab.com/sosy-lab/sv-comp/bench-defs
 #RUN cd bench-defs; make init
