@@ -24,22 +24,23 @@ def year(config, abbrev=False) -> str:
 
 def participant_table(config) -> str:
     columns = {
-        "name": lambda d: d.get("name", ""),
-        "lang": lambda d: d.get("lang", ""),
-        "url": lambda d: d.get("url", ""),
-        "required-ubuntu-packages": lambda d: ",".join(
+        "id": lambda k, _: k,
+        "name": lambda _, d: d.get("name", ""),
+        "lang": lambda _, d: d.get("lang", ""),
+        "url": lambda _, d: d.get("url", ""),
+        "required-ubuntu-packages": lambda _, d: ",".join(
             d.get("required-ubuntu-packages", [])
         ),
-        "jury-member-name": lambda d: d.get("jury-member", {}).get("name", ""),
-        "jury-member-institution": lambda d: d.get("jury-member", {}).get(
+        "jury-member-name": lambda _, d: d.get("jury-member", {}).get("name", ""),
+        "jury-member-institution": lambda _, d: d.get("jury-member", {}).get(
             "institution", ""
         ),
-        "jury-member-country": lambda d: d.get("jury-member", {}).get("country", ""),
-        "jury-member-url": lambda d: d.get("jury-member", {}).get("url", ""),
+        "jury-member-country": lambda _, d: d.get("jury-member", {}).get("country", ""),
+        "jury-member-url": lambda _, d: d.get("jury-member", {}).get("url", ""),
     }
     table = ["\t".join(columns.keys())]
-    for metadata in config["verifiers"].values():
-        structured_data = [columns[c](metadata) for c in columns]
+    for key, metadata in config["verifiers"].items():
+        structured_data = [columns[c](key, metadata) for c in columns]
         metadata_as_tsv = "\t".join([e if e else "" for e in structured_data])
         table.append(metadata_as_tsv)
     return "\n".join(table)
