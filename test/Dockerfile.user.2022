@@ -19,6 +19,7 @@ RUN apt-get install -y \
        clang-9 \
        clang-10 \
        clang-11 \
+       clang-12 \
        expect \
        frama-c-base \
        llvm \
@@ -31,9 +32,11 @@ RUN apt-get install -y \
        libssl1.1 \
        libtinfo5 \
        libwhy3-ocaml-dev \
+       libz3-4 \
        llvm-9 \
        llvm-10 \
        llvm-11 \
+       llvm-12 \
        mono-runtime \
        openjdk-8-jdk-headless \
        openjdk-11-jdk-headless \
@@ -56,7 +59,7 @@ RUN apt-get install -y \
 # (Fetch latest version from the Ansible configuration for the competition machines:
 #  https://gitlab.com/sosy-lab/admin/sysadmin/ansible/blob/master/roles/benchmarking/tasks/main.yml)
 #
-# Last synchronized: 2021-10-14 from commit ff8f62226b3f02d47c30f907b2cf0b71a6a1ed52
+# Last synchronized: 2021-10-15 from commit 4d8f3c05d1bdbc5328e85c6c7eea3bbb98ec65ad
 #
 #      #- acpid
 #      #- graphviz
@@ -69,6 +72,7 @@ RUN apt-get install -y \
 #      - clang-9 # SV-COMP'21 Dartagnan, Test-Comp'21 Klee, SV-COMP'22 Gazer-Theta
 #      - clang-10 # SV-COMP'21 SMACK, Test-Comp'21 Klee
 #      - clang-11 # SV-COMP'22 Dartagnan
+#      - clang-12  # SV-COMP'22 LART
 #      - expect # SV-COMP'20 PredatorHP
 #      - frama-c-base
 #      #- libc6-dev # SV-COMP'20 Map2Check
@@ -87,10 +91,12 @@ RUN apt-get install -y \
 #      - libssl1.1 # SV-COMP'22 SESL
 #      - libtinfo5 # Thomas L.: llvm2c
 #      - libwhy3-ocaml-dev # for Frama-C
+#      - libz3-4  # SV-COMP'22 LART
 #      #- linux-libc-dev:i386 # SV-COMP'20 CBMC
 #      - llvm-9 # SV-COMP'21 Dartagnan, gazer-theta, Test-Comp'21 Klee
 #      - llvm-10 # Test-Comp'21 Klee
 #      - llvm-11 # SV-COMP'22 Dartagnan
+#      - llvm-12  # SV-COMP'22 LART
 #      - mono-runtime # SV-COMP'22 AProVE
 #      - openjdk-8-jdk-headless # SV-COMP'20 Ultimate, SV-COMP'22 VeriAbs, SV-COMP'22 JayHorn
 #      - openjdk-11-jdk-headless
@@ -98,7 +104,7 @@ RUN apt-get install -y \
 #      - python3-pandas # Test-Comp'21 VeriFuzz
 #      - python3-sklearn # Test-Comp'21 VeriFuzz
 #      #- python-pycparser # SV-COMP'19 CSeq
-#      - python3-lxml # Witnesslint, SV-COMP'22 Symbiotic
+#      - python3-lxml # Witnesslint, SV-COMP'22 Symbiotic, SV-COMP'22 LART
 #      - python3-mpi4py
 #      - python3-networkx # SV-COMP'22 Wit4Java
 #      - python3-numpy # Gidon
