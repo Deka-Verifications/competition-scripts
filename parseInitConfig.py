@@ -28,15 +28,15 @@ def participant_table(config, yaml_key="verifiers") -> str:
         "name": lambda _, d: d.get("name", ""),
         "lang": lambda _, d: d.get("lang", ""),
         "url": lambda _, d: d.get("url", ""),
-        "required-ubuntu-packages": lambda _, d: ",".join(
-            d.get("required-ubuntu-packages", [])
-        ),
         "jury-member-name": lambda _, d: d.get("jury-member", {}).get("name", ""),
         "jury-member-institution": lambda _, d: d.get("jury-member", {}).get(
             "institution", ""
         ),
         "jury-member-country": lambda _, d: d.get("jury-member", {}).get("country", ""),
         "jury-member-url": lambda _, d: d.get("jury-member", {}).get("url", ""),
+        "required-ubuntu-packages": lambda _, d: ",".join(
+            d.get("required-ubuntu-packages", [])
+        ),
     }
     table = ["\t".join(columns.keys())]
     for key, metadata in config[yaml_key].items():
