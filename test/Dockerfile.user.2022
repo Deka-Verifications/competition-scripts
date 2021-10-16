@@ -20,6 +20,7 @@ RUN apt-get install -y \
        clang-10 \
        clang-11 \
        clang-12 \
+       clang-tidy \
        expect \
        frama-c-base \
        llvm \
@@ -59,7 +60,7 @@ RUN apt-get install -y \
 # (Fetch latest version from the Ansible configuration for the competition machines:
 #  https://gitlab.com/sosy-lab/admin/sysadmin/ansible/blob/master/roles/benchmarking/tasks/main.yml)
 #
-# Last synchronized: 2021-10-15 from commit 4d8f3c05d1bdbc5328e85c6c7eea3bbb98ec65ad
+# Last synchronized: 2021-10-16 from commit 0e8f4f45af681cd26c2b019d20662586124fecf1
 #
 #      #- acpid
 #      #- graphviz
@@ -73,6 +74,7 @@ RUN apt-get install -y \
 #      - clang-10 # SV-COMP'21 SMACK, Test-Comp'21 Klee
 #      - clang-11 # SV-COMP'22 Dartagnan
 #      - clang-12  # SV-COMP'22 LART
+#      - clang-tidy  # TestCov
 #      - expect # SV-COMP'20 PredatorHP
 #      - frama-c-base
 #      #- libc6-dev # SV-COMP'20 Map2Check
