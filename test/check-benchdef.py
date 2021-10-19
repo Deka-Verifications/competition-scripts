@@ -20,6 +20,8 @@ ALLOWLIST_TASK_SETS = [
     "Unused_Juliet",
 ]
 
+CPU_MODEL_TO_USE = "Intel Xeon E3-1230 v5 @ 3.40 GHz"
+
 
 class DTDResolver(etree.Resolver):
     def __init__(self):
@@ -49,15 +51,21 @@ PARSER.resolvers.add(DTDResolver())
 def _check_valid(xml_file: Path):
     """Tries to parse the given xml file and returns any produced exceptions."""
     try:
-        etree.parse(str(xml_file), PARSER)
+        _parse(str(xml_file), PARSER)
         return []
     except (etree.ParseError, etree.XMLSyntaxError) as e:
         return ["Failed parsing xml: " + str(e)]
 
 
 def _get_tasks(xml_file):
-    xml_root = etree.parse(str(xml_file))
+    xml_root = _parse(str(xml_file))
     return list(xml_root.iter(tag="tasks"))
+
+
+def _parse(bench_xml: Path, parser=None):
+    if parser:
+        return etree.parse(str(bench_xml), parser)
+    return etree.parse(str(bench_xml))
 
 
 def _check_task_defs_match_set(xml_file: Path, /, tasks_dir: Path):
@@ -190,6 +198,29 @@ def _check_verifier_listed_in_category_info(xml: Path, category_info):
     return []
 
 
+def _check_required_options(bench_def: Path):
+    errors = []
+    xml_root = _parse(bench_def)
+    errors += _check_required_option_cpuModel_set(xml_root)
+    return errors
+
+
+def _check_required_option_cpuModel_set(
+    xml_root,
+    cpu_model=CPU_MODEL_TO_USE,
+    name_require_elem="require",
+    name_cpuModel_attrib="cpuModel",
+):
+    for elem in xml_root.findall(name_require_elem):
+        if name_cpuModel_attrib in elem.attrib:
+            if elem.attrib[name_cpuModel_attrib] == cpu_model:
+                return []
+            return [
+                f'Wrong CPU model set in element \'{name_require_elem}\': "{elem.attrib[name_cpuModel_attrib]}" should be "{cpu_model}"'
+            ]
+    return ["CPU model not set. Add with '<require cpuModel=...'"]
+
+
 def _perform_checks(xml: Path, category_info, tasks_dir: Path):
     util.info(str(xml), label="CHECKING")
     xml_errors = _check_valid(xml)
@@ -197,6 +228,7 @@ def _perform_checks(xml: Path, category_info, tasks_dir: Path):
         return xml_errors
     errors = _check_task_defs_match_set(xml, tasks_dir=tasks_dir)
     errors += _check_verifier_listed_in_category_info(xml, category_info)
+    errors += _check_required_options(xml)
     if tasks_dir.exists() and not "validate" in xml.name:
         errors += _check_all_sets_used(
             xml,
