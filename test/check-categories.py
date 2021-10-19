@@ -116,6 +116,10 @@ def _check_category_participants(
     category_info: dict, participants: Iterable[str]
 ) -> Iterable[str]:
     participants = set(participants)
+    list_of_not_participating = category_info["not_participating"]
+    doubles = set(list_of_not_participating).intersection(participants)
+    if doubles:
+        yield f"Participant(s) listed as participant AND as 'not_participating': {doubles}"
     for name, c in category_info["categories"].items():
         not_participating = set(c["verifiers"]) - participants
         if not_participating:
