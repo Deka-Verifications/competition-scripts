@@ -81,7 +81,7 @@ def write_hashmap(output_file, directories, root_dir, target_file_glob):
         logging.debug("Globbing for %s", glob_pattern)
         # Process pool that is used to create hashes for files in parallel.
         # The given number defines the number of jobs that are run in parallel.
-        with mp.Pool(4) as process_pool:
+        with mp.Pool(2) as process_pool:
             individual_hash_dicts = process_pool.map(
                 partial(handle_file, root_dir=root_dir),
                 glob.iglob(glob_pattern, recursive=True),
