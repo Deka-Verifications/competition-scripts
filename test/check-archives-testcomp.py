@@ -193,16 +193,6 @@ def _checkToolInfoModule(toolname, config):
         return
 
     try:
-        reported_name = tool.name()
-        if not reported_name:
-            error("tool '%s' has no name" % toolname)
-    except Exception as e:
-        error(f"querying tool-name failed for {toolname}", cause=e)
-        reported_name = ""
-    if not reported_name:
-        reported_name = ""
-
-    try:
         # import inspect
         # if not inspect.getdoc(tool):
         #     error("tool %s has no documentation" % toolname)
@@ -213,6 +203,21 @@ def _checkToolInfoModule(toolname, config):
             error("tool '%s' with file %s is not executable" % (toolname, exe))
     except Exception as e:
         error(f"querying tool executable failed for {toolname}", cause=e)
+
+    if exe:
+        _checksOnExecutable(tool, exe, toolname)
+
+
+def _checksOnExecutable(tool, exe, toolname):
+    try:
+        reported_name = tool.name()
+        if not reported_name:
+            error("tool '%s' has no name" % toolname)
+    except Exception as e:
+        error(f"querying tool-name failed for {toolname}", cause=e)
+        reported_name = ""
+    if not reported_name:
+        reported_name = ""
 
     try:
         version = tool.version(exe)
