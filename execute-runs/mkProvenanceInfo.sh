@@ -14,6 +14,7 @@ VERIFIER=$1
 COMPETITIONNAME=$($DIR/../parseInitConfig.py --get-comp $DIR/../../benchmark-defs/category-structure.yml)
 YEAR=$($DIR/../parseInitConfig.py --get-year $DIR/../../benchmark-defs/category-structure.yml)
 TARGETSERVER=$(echo $COMPETITIONNAME | tr [:upper:] [:lower:])
+TAG_PREFIX_OPTION="--match "$(echo $COMPETITIONNAME | tr [:upper:] [:lower:] | sed "s/-//")"*"
 ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"
 GIT_REPOS="archives sv-benchmarks benchexec scripts ."
 
@@ -32,7 +33,10 @@ echo "based on the components"
 for repo in $GIT_REPOS; do
   (
   cd "$DIR/../../$repo"
-  echo "`git remote get-url origin`  git-describe: `git describe --long --always`"
+  if [ "$repo" == "benchexec" ]; then
+    TAG_PREFIX_OPTION=""
+  fi
+  echo "`git remote get-url origin`  git-describe: `git describe --long --always $TAG_PREFIX_OPTION`"
   )
 done
 
