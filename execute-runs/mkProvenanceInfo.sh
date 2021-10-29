@@ -9,16 +9,16 @@
 # @title Write provenance information to config file
 # @description Prepare Phase: write info about competition and components used to file
 
-DIR=$(realpath $(dirname "$0"))
+DIR=$(realpath "$(dirname "$0")")
 VERIFIER=$1
-COMPETITIONNAME=$($DIR/../parseInitConfig.py --get-comp $DIR/../../benchmark-defs/category-structure.yml)
-YEAR=$($DIR/../parseInitConfig.py --get-year $DIR/../../benchmark-defs/category-structure.yml)
-TARGETSERVER=$(echo $COMPETITIONNAME | tr [:upper:] [:lower:])
-TAG_PREFIX_OPTION="--match "$(echo $COMPETITIONNAME | tr [:upper:] [:lower:] | sed "s/-//")"*"
+COMPETITIONNAME=$("$DIR/../parseInitConfig.py" --get-comp "$DIR/../../benchmark-defs/category-structure.yml")
+YEAR=$("$DIR/../parseInitConfig.py" --get-year "$DIR/../../benchmark-defs/category-structure.yml")
+TARGETSERVER=$(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]")
+TAG_PREFIX_OPTION="--match $(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]" | sed "s/-//")*"
 ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"
 GIT_REPOS="archives sv-benchmarks benchexec scripts ."
 
-if [ -z $VERIFIER ]; then
+if [ -z "$VERIFIER" ]; then
   echo "Error: No verifier specified."
   exit 1
 fi
@@ -40,5 +40,5 @@ for repo in $GIT_REPOS; do
   )
 done
 
-echo "Archive: $VERIFIER.zip  DATE: "$(date -Iminutes --date=@$(stat --format=%Y $ARCHIVE))"  SHA1: "$(shasum $ARCHIVE | sed "s/\(.\{10\}\).*/\1/")"..."
+echo "Archive: $VERIFIER.zip  DATE: $(date -Iminutes --date=@"$(stat --format=%Y "$ARCHIVE")")  SHA1: $(shasum "$ARCHIVE" | sed "s/\(.\{10\}\).*/\1/")..."
 echo ""
