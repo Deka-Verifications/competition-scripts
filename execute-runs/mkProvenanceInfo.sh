@@ -32,7 +32,7 @@ echo "based on the components"
 for repo in $GIT_REPOS; do
   (
   cd "$DIR/../../$repo"
-  echo "`git remote get-url origin`  `git describe --long --always`"
+  echo "`git remote get-url origin`  git-describe: `git describe --long --always`"
   )
 done
 
