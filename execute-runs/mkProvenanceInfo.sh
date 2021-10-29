@@ -28,7 +28,7 @@ echo "Provenance information:"
 echo "Benchmark executed"
 echo "for $COMPETITIONNAME $YEAR, https://$TARGETSERVER.sosy-lab.org/$YEAR/"
 echo "by $USER@$HOSTNAME"
-echo "on `date -Iminutes`"
+echo "on $(date -Iminutes)"
 echo "based on the components"
 for repo in $GIT_REPOS; do
   (
@@ -36,9 +36,9 @@ for repo in $GIT_REPOS; do
   if [ "$repo" == "benchexec" ]; then
     TAG_PREFIX_OPTION=""
   fi
-  echo "`git remote get-url origin`  git-describe: `git describe --long --always $TAG_PREFIX_OPTION`"
+  echo "$(git remote get-url origin)  git-describe: $(git describe --long --always $TAG_PREFIX_OPTION)"
   )
 done
 
-echo "Archive: $VERIFIER.zip  DATE: "$(date -Iminutes --date=@$(stat --format=%Y $ARCHIVE))"  SHA1: "`shasum $ARCHIVE | sed "s/\(.\{10\}\).*/\1/"`"..."
+echo "Archive: $VERIFIER.zip  DATE: "$(date -Iminutes --date=@$(stat --format=%Y $ARCHIVE))"  SHA1: "$(shasum $ARCHIVE | sed "s/\(.\{10\}\).*/\1/")"..."
 echo ""
