@@ -32,7 +32,7 @@ echo "on $(date -Iminutes)"
 echo "based on the components"
 for repo in $GIT_REPOS; do
   (
-  cd "$DIR/../../$repo"
+  cd "$DIR/../../$repo" || exit
   if [ "$repo" == "benchexec" ]; then
     TAG_PREFIX_OPTION=""
   fi
