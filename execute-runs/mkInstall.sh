@@ -22,7 +22,7 @@ fi
 # Unzip
 echo "Installing $ARCHIVE ...";
 cd "$TOOL_DIR" || exit
-unzip $ARCHIVE;
+unzip "$ARCHIVE"
 # Check structure
 if [[ $(find . -mindepth 1 -maxdepth 1 | wc -l) == 1 ]]; then
   echo "Info: One folder found in archive.";
