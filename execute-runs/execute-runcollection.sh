@@ -22,7 +22,7 @@ WITNESS_TARGET=$4
 WITNESS_GLOB_SUFFIX=$5
 OUTPUT_DIR=$6
 WAIT_TIME=$((($7 - 1) * 30 + 10));
-SCRIPTS_DIR=$(realpath $(dirname "$0"))
+SCRIPTS_DIR=$(realpath "$(dirname "$0")")
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
 PYTHONPATH="$ROOT_DIR/benchexec"
 
@@ -47,7 +47,7 @@ TOOL_DIR=$(mktemp --directory --tmpdir="./bin/" "$TOOL-XXXXXXXXXX")
 
 echo ""
 echo "  Installing $TOOL in $TOOL_DIR"
-$SCRIPTS_DIR/mkInstall.sh "$TOOL" "$TOOL_DIR"
+"$SCRIPTS_DIR/mkInstall.sh" "$TOOL" "$TOOL_DIR"
 
 echo ""
 echo "  Executing $TOOL"
@@ -58,7 +58,7 @@ if [[ ! -e $OUTPUT_DIR ]]; then
   exit 1
 fi
 TMP_FILE=$(mktemp --suffix=-provenance.txt)
-$SCRIPTS_DIR/mkProvenanceInfo.sh $TOOL > "$TMP_FILE"
+"$SCRIPTS_DIR/mkProvenanceInfo.sh" "$TOOL" > "$TMP_FILE"
 $BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
 rm "$TMP_FILE"
 #rm -rf "$TOOL_DIR"
