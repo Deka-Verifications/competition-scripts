@@ -11,8 +11,8 @@
 
 TOOL=$1;
 TOOL_DIR=$2;
-YEAR=`scripts/parseInitConfig.py --get-year benchmark-defs/category-structure.yml`;
-ARCHIVE="`pwd`/archives/${YEAR}/${TOOL}.zip";
+YEAR=$(scripts/parseInitConfig.py --get-year benchmark-defs/category-structure.yml);
+ARCHIVE="$(pwd)/archives/${YEAR}/${TOOL}.zip";
 
 if [[ -z "$TOOL" || -z "$TOOL_DIR" ]]; then
   echo "Usage: $0 <tool> <install directory>"
@@ -24,9 +24,9 @@ echo "Installing $ARCHIVE ...";
 cd "$TOOL_DIR" || exit
 unzip $ARCHIVE;
 # Check structure
-if [[ `find . -mindepth 1 -maxdepth 1 | wc -l` == 1 ]]; then
+if [[ $(find . -mindepth 1 -maxdepth 1 | wc -l) == 1 ]]; then
   echo "Info: One folder found in archive.";
-  DIR="`find . -mindepth 1 -maxdepth 1`";
+  DIR="$(find . -mindepth 1 -maxdepth 1)";
   mv "${DIR}" "${DIR}__COMP";
   mv "${DIR}__COMP"/* .
   rmdir "${DIR}__COMP"
