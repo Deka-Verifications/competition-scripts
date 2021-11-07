@@ -4,6 +4,8 @@ This repository contains scripts and definitions that are useful to execute
 benchmark experiments for competitions of automatic tools,
 like solvers, verifiers, and test generators.
 
+The scripts are based on the benchmarking framework [BenchExec](https://github.com/sosy-lab/benchexec) [1].
+
 ## Instructions for Execution
 
 The concrete instructions for how to use the scripts in this repository
@@ -35,7 +37,7 @@ that has mostly the same packages installed as the competition machines:
   - Start tool
 
 
-## Parameters of RunExec
+### Parameters of RunExec
 
 <!-- Fetch latest version from the Ansible configuration for the competition machines:
 https://gitlab.com/sosy-lab/admin/sysadmin/ansible/-/blob/master/roles/vcloud-worker/templates/Config.j2
@@ -61,5 +63,12 @@ Last synchronized: 2020-12-05 from commit 670c4eb
 --cores 0-7 # hardware-specific
 --full-access-dir /sys/fs/cgroup # competition-specific
 ```
+
+## References
+
+[1]: Dirk Beyer, Stefan Löwe, and Philipp Wendler.
+     Reliable Benchmarking: Requirements and Solutions.
+     International Journal on Software Tools for Technology Transfer (STTT), 21(1):1-29, 2019.
+     https://doi.org/10.1007/s10009-017-0469-y
 
 
