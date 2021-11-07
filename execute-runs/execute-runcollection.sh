@@ -24,7 +24,6 @@ OUTPUT_DIR=$6
 WAIT_TIME=$((($7 - 1) * 30 + 10));
 SCRIPTS_DIR=$(realpath "$(dirname "$0")")
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
-PYTHONPATH="$ROOT_DIR/benchexec"
 
 if [[ "$BENCHEXEC_COMMAND" == "" || "$TOOL" == "" || "$BENCHMARK_DEFINITION_FILE" == "" ||
       "$WITNESS_TARGET" == "" || "$WITNESS_GLOB_SUFFIX" == "" || "$OUTPUT_DIR" == "" ]]; then
