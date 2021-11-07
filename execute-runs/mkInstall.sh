@@ -21,7 +21,7 @@ fi
 
 # Unzip
 echo "Installing $ARCHIVE ...";
-cd "$TOOL_DIR";
+cd "$TOOL_DIR" || exit
 unzip $ARCHIVE;
 # Check structure
 if [[ `find . -mindepth 1 -maxdepth 1 | wc -l` == 1 ]]; then
