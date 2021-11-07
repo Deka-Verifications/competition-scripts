@@ -18,7 +18,7 @@ are provided in the competition-specific repositories.
   Documentation for execution: https://gitlab.com/sosy-lab/test-comp/bench-defs#test-comp-reproducibility
 
 
-## Ubuntu Packages on Apollon Machines
+## Computing Environment on Competition Machines
 
 The following instructions are specific to competitions that are executed on the compute cluster at LMU Munich (Apollon machines),
 and try to explain the computing environment that is used for the competitions.
