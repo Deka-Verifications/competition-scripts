@@ -51,7 +51,7 @@ echo "  Installing $TOOL in $TOOL_DIR"
 echo ""
 echo "  Executing $TOOL"
 
-cd "$TOOL_DIR";
+cd "$TOOL_DIR" || exit
 if [[ ! -e $OUTPUT_DIR ]]; then
   echo "Output folder $OUTPUT_DIR does not exist."
   exit 1
@@ -64,7 +64,7 @@ rm "$TMP_FILE"
 
 echo ""
 echo "  Post-processing $TOOL"
-cd "$OUTPUT_DIR"
+cd "$OUTPUT_DIR" || exit
 RESULT_DIR=`ls -dt "${BENCHMARK_DEFINITION_FILE%.xml}".????-??-??_??-??-??.files | head -1`
 if [ -e "$RESULT_DIR" ]; then
   ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
