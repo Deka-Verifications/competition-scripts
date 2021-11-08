@@ -52,17 +52,18 @@ Last synchronized: 2020-12-05 from commit 670c4eb
 --set-cgroup-value pids.max=5000
 --output-directory <work-dir>
 --overlay-dir <run-dir>
---debug
+--quiet
 --maxOutputSize 2MB
 --dir <work-dir>
 --output <logfile>
+--full-access-dir /sys/fs/cgroup # competition-specific
 --timelimit <depends on benchmark XML>
 --softtimelimit 900s # only if specified in benchmark XML
 --memlimit 15GB
 --memoryNodes 0 # hardware-specific
 --cores 0-7 # hardware-specific
---full-access-dir /sys/fs/cgroup # competition-specific
 ```
+
 
 ## References
 
