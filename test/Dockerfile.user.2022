@@ -48,6 +48,7 @@ RUN apt-get install -y \
        python3-mpi4py \
        python3-networkx \
        python3-numpy \
+       python3-pycparser \
        python3-setuptools \
        sbcl \
        why3 \
@@ -60,7 +61,7 @@ RUN apt-get install -y \
 # (Fetch latest version from the Ansible configuration for the competition machines:
 #  https://gitlab.com/sosy-lab/admin/sysadmin/ansible/blob/master/roles/benchmarking/tasks/main.yml)
 #
-# Last synchronized: 2021-10-16 from commit 0e8f4f45af681cd26c2b019d20662586124fecf1
+# Last synchronized: 2021-11-09 from commit 065243bd2e26609c0020e5a74f58dc53c1ba4218
 #
 #      #- acpid
 #      #- graphviz
@@ -110,6 +111,7 @@ RUN apt-get install -y \
 #      - python3-mpi4py
 #      - python3-networkx # SV-COMP'22 Wit4Java
 #      - python3-numpy # Gidon
+#      - python3-pycparser  # SV-COMP'22 Frama-C-SV
 #      - python3-setuptools # SecC
 #      - sbcl # SV-COMP'20 GACAL
 #      #- unzip # SV-COMP'19 JBMC, Test-Comp'20 Tracer-X
