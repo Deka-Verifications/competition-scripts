@@ -60,6 +60,7 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
     sed "s/LOGDIR/${RESULT_DIR}/g" ${PATHPREFIX}/${BENCHMARKSDIR}/${VALIDATORXMLTEMPLATE}.xml > ${PATHPREFIX}/${BENCHMARKSDIR}/${VALIDATORXML}
     echo "";
     echo "Processing validation $VALIDATORXML ...";
+    # Create a list of rundefinitions, formatted such that it can be passed to BenchExec.
     RUNDEFS=`grep "<rundefinition" ${BENCHMARKSDIR}/${VERIFIER}.xml \
              | grep -v "<!--" \
              | sed "s/<rundefinition name=\"\(.*\)\">/-r \1 /"`;
