@@ -8,7 +8,7 @@
 # Step 3: Call mkRunProcessLocal.sh to post-process the results
 # Step 4: Call mkRunMailResults.sh to send results to participants
 
-source $(dirname "$0")/configure.sh
+source contrib/configure.sh
 
 NUMBER_JOBS_VALIDATORS=4
 VERIFIER=$1;
