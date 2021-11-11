@@ -67,7 +67,7 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
       echo "No validation support for Java categories.";
       continue;
     fi
-    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo "$RUNDEFS")
+    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo $RUNDEFS)
     echo scripts/execute-runs/execute-runcollection.sh \
            \""$COMMAND"\" "$VAL" "$VALIDATORXML" \
            "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \
