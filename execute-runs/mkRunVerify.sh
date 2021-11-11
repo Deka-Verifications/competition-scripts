@@ -1,15 +1,12 @@
 #!/bin/bash
 
-# @title Run the Verification of Benchmarks
-# @phase Run
-# @description The main script to execute the benchmarks.
-# It has 4 steps: Run verifier, run validator, processing results, and sending mails.
-# Step 1:  At first installs the verifier using make,
-#  then runs the benchmark from the benchmark definition using BenchExec, then initialzes the file store on the results director.
-# Step 2: Same as Step 1 but for the chosen validators.
-# Step 3: Process results using mkRunProcessLocal
-# Step 4: Send mails using mkRunMailResults.
-# TODO: I still don't understand the sourcing of "mkRunWitnessStore" after in the "ALL" case.
+# This is the main script to execute benchmarks; this execution phase has four steps:
+# Step 1: Call execute-runcollection.sh to execute the tool (e.g., verification or test generation)
+#         according to the given benchmark definition
+# Step 2: Call execute-runcollection.sh to execute a number of result validators
+#         (e.g., witness-based result validation or test-suite validation)
+# Step 3: Call mkRunProcessLocal.sh to post-process the results
+# Step 4: Call mkRunMailResults.sh to send results to participants
 
 source $(dirname "$0")/configure.sh
 
