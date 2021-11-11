@@ -19,7 +19,7 @@ while true; do
   echo "Processing job: $JOB"
   mv "queue/$JOB" "queue/$JOB.running"
   sleep 10
-  contrib/mkRunVerify.sh "$JOB" |& tee -a "./results-logs/$JOB.log"
+  scripts/execute-runs/mkRunVerify.sh "$JOB" |& tee -a "./results-logs/$JOB.log"
   mv -f "queue/$JOB.running" "queue/$JOB.finished"
 done
 
