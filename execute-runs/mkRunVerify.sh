@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# This file is part of the competition environment.
+#
+# SPDX-FileCopyrightText: 2011-2021 Dirk Beyer <https://www.sosy-lab.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # This is the main script to execute benchmarks; this execution phase has four steps:
 # Step 1: Call execute-runcollection.sh to execute the tool (e.g., verification or test generation)
 #         according to the given benchmark definition
