@@ -38,7 +38,7 @@ if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
 fi
 
 pushd "$RESULTSVERIFICATION"
-RESULT_DIR=$(ls -dt ${VERIFIER}.????-??-??_??-??-??.files | head -1)
+RESULT_DIR=$(ls -dt "$VERIFIER".????-??-??_??-??-??.files | head -1)
 if [ -e "$RESULT_DIR" ]; then
   echo "Results in $RESULT_DIR"
 else
@@ -52,22 +52,22 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
   echo "Processing validation of $VERIFIER's results in $RESULT_DIR ...";
   VAL_COMMANDS=$(mktemp --suffix=-validation-runs.txt)
   for VALIDATORXMLTEMPLATE in $VALIDATORLIST; do
-    VALIDATOR=${VALIDATORXMLTEMPLATE%-validate-*};
+    VALIDATOR="${VALIDATORXMLTEMPLATE%-validate-*}"
     VAL="val_$VALIDATOR"
     echo "";
     echo "Running validation by $VALIDATOR ..."
     VALIDATORXML="${VALIDATORXMLTEMPLATE}-${VERIFIER}.xml";
-    sed "s/LOGDIR/${RESULT_DIR}/g" ${PATHPREFIX}/${BENCHMARKSDIR}/${VALIDATORXMLTEMPLATE}.xml > ${PATHPREFIX}/${BENCHMARKSDIR}/${VALIDATORXML}
+    sed "s/LOGDIR/$RESULT_DIR/g" "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXMLTEMPLATE.xml" > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
     echo "";
     echo "Processing validation $VALIDATORXML ...";
     # Create a list of rundefinitions, formatted such that it can be passed to BenchExec.
     RUNDEFS=$(xmlstarlet select --template --match '/benchmark/rundefinition' \
-	        --output '-r ' --value-of '@name' --nl ${BENCHMARKSDIR}/${VERIFIER}.xml 2>/dev/null)
-    if [[ "${RUNDEFS}" =~ java ]]; then
+	        --output '-r ' --value-of '@name' --nl "$BENCHMARKSDIR/$VERIFIER.xml" 2>/dev/null)
+    if [[ "$RUNDEFS" =~ java ]]; then
       echo "No validation support for Java categories.";
       continue;
     fi
-    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo $RUNDEFS)
+    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo "$RUNDEFS")
     echo scripts/execute-runs/execute-runcollection.sh \
            \""$COMMAND"\" "$VAL" "$VALIDATORXML" \
            "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \
@@ -75,15 +75,15 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
   done
   echo "All validation tasks created and ready to be executed.";
   echo "";
-  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} {%} \|\& tee -a ./results-logs/$VERIFIER-{%}.log
+  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} {%} \|\& tee -a ./results-logs/"$VERIFIER"-{%}.log
   rm "$VAL_COMMANDS"
 fi
 
 date -Iseconds
 
 # Process results
-ionice -c 3 nice ${CONTRIB_DIR}/mkRunProcessLocal.sh $VERIFIER;
+ionice -c 3 nice "$CONTRIB_DIR"/mkRunProcessLocal.sh "$VERIFIER";
 
 # E-mail results
-ionice -c 3 nice ${CONTRIB_DIR}/mkRunMailResults.sh $VERIFIER --really-send-email;
+ionice -c 3 nice "$CONTRIB_DIR"/mkRunMailResults.sh "$VERIFIER" --really-send-email;
 
