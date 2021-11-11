@@ -38,7 +38,7 @@ if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
 fi
 
 pushd "$RESULTSVERIFICATION"
-RESULT_DIR=`ls -dt ${VERIFIER}.????-??-??_??-??-??.files | head -1`
+RESULT_DIR=$(ls -dt ${VERIFIER}.????-??-??_??-??-??.files | head -1)
 if [ -e "$RESULT_DIR" ]; then
   echo "Results in $RESULT_DIR"
 else
@@ -61,8 +61,8 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
     echo "";
     echo "Processing validation $VALIDATORXML ...";
     # Create a list of rundefinitions, formatted such that it can be passed to BenchExec.
-    RUNDEFS=`xmlstarlet select --template --match '/benchmark/rundefinition' \
-	               --output '-r ' --value-of '@name' --nl ${BENCHMARKSDIR}/${VERIFIER}.xml 2>/dev/null`
+    RUNDEFS=$(xmlstarlet select --template --match '/benchmark/rundefinition' \
+	        --output '-r ' --value-of '@name' --nl ${BENCHMARKSDIR}/${VERIFIER}.xml 2>/dev/null)
     if [[ "${RUNDEFS}" =~ java ]]; then
       echo "No validation support for Java categories.";
       continue;
