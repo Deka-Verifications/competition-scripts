@@ -57,6 +57,14 @@ def parse_yaml(yaml_file):
         raise e
 
 
+def get_archive_name_for_validator(validator_identifier):
+    return f"val_{validator_identifier.rsplit('-')[0]}.zip"
+
+
+def get_archive_name_for_verifier(verifier_identifier):
+    return f"{verifier_identifier}.zip"
+
+
 def verifiers_in_category(category_info, category):
     categories = category_info["categories"]
     selected = categories.get(category, {})
