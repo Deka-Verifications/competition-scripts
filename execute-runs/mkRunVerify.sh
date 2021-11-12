@@ -60,9 +60,9 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
     sed "s/LOGDIR/$RESULT_DIR/g" "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXMLTEMPLATE.xml" > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
     echo "";
     echo "Processing validation $VALIDATORXML ...";
-    # Create a list of rundefinitions, formatted such that it can be passed to BenchExec.
-    RUNDEFS=$(xmlstarlet select --template --match '/benchmark/rundefinition' \
-	        --output '-r ' --value-of '@name' --nl "$BENCHMARKSDIR/$VERIFIER.xml" 2>/dev/null)
+    # Create a list of task-sets of the verifier, formatted such that it can be passed to BenchExec.
+    RUNDEFS=$(xmlstarlet select --template --match '//*/tasks' \
+	        --output '--tasks ' --value-of '@name' --nl "$BENCHMARKSDIR/$VERIFIER.xml" 2>/dev/null)
     if [[ "$RUNDEFS" =~ java ]]; then
       echo "No validation support for Java categories.";
       continue;
