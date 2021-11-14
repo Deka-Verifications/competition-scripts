@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 import _util as util
+from collections import defaultdict
 
 
 def parse_args(argv):
@@ -31,12 +32,16 @@ def parse_args(argv):
 
 
 def _tool_to_gitlab_handle(category_info):
+    tool_to_handles = defaultdict(set)
     for tool, metadata in category_info["verifiers"].items():
         gitlab_handle = metadata["jury-member"]["gitlab"]
-        yield (util.get_archive_name_for_verifier(tool), gitlab_handle)
+        archive = util.get_archive_name_for_verifier(tool)
+        tool_to_handles[archive].add(gitlab_handle)
     for tool, metadata in category_info["validators"].items():
         gitlab_handle = metadata["jury-member"]["gitlab"]
-        yield (util.get_archive_name_for_validator(tool), gitlab_handle)
+        archive = util.get_archive_name_for_validator(tool)
+        tool_to_handles[archive].add(gitlab_handle)
+    return tool_to_handles.items()
 
 
 def main(argv=None):
@@ -45,14 +50,16 @@ def main(argv=None):
     args = parse_args(argv)
 
     category_info = util.parse_yaml(args.category_structure)
-    for archive, gitlab_handle in _tool_to_gitlab_handle(category_info):
+    print("[Participants]")
+    for archive, gitlab_handles in _tool_to_gitlab_handle(category_info):
+        gitlab_handles = " ".join(f"@{handle}" for handle in gitlab_handles)
         relevant_files = [
             f.relative_to(args.base_directory)
             for f in args.base_directory.glob(f"**/{archive}")
         ]
         assert relevant_files, f"No files found for {args.base_directory}/**/{archive}"
         for f in relevant_files:
-            print(f"{f} @{gitlab_handle}")
+            print(f"{f} {gitlab_handles}")
 
 
 if __name__ == "__main__":
