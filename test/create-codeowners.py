@@ -60,7 +60,7 @@ def main(argv=None):
     category_info = util.parse_yaml(args.category_structure)
     print("[Participants]")
     for archive, gitlab_handles in _tool_to_gitlab_handle(category_info):
-        gitlab_handles = " ".join(f"@{handle}" for handle in gitlab_handles)
+        gitlab_handles = " ".join(f"@{handle}" for handle in sorted(gitlab_handles))
         relevant_files = [
             f.relative_to(args.base_directory)
             for f in args.base_directory.glob(f"**/{archive}")
