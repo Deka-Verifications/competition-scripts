@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 import _util as util
+from typing import Iterable
 from collections import defaultdict
 
 
@@ -31,16 +32,23 @@ def parse_args(argv):
     return args
 
 
+def _get_codeowner_handles(tool_data) -> Iterable[str]:
+    gitlab_handles = tool_data["code-owner"]
+    if not isinstance(gitlab_handles, list):
+        gitlab_handles = [gitlab_handles]
+    return gitlab_handles
+
+
 def _tool_to_gitlab_handle(category_info):
     tool_to_handles = defaultdict(set)
     for tool, metadata in category_info["verifiers"].items():
-        gitlab_handle = metadata["jury-member"]["gitlab"]
+        gitlab_handles = _get_codeowner_handles(metadata)
         archive = util.get_archive_name_for_verifier(tool)
-        tool_to_handles[archive].add(gitlab_handle)
+        tool_to_handles[archive] |= set(gitlab_handles)
     for tool, metadata in category_info["validators"].items():
-        gitlab_handle = metadata["jury-member"]["gitlab"]
+        gitlab_handles = _get_codeowner_handles(metadata)
         archive = util.get_archive_name_for_validator(tool)
-        tool_to_handles[archive].add(gitlab_handle)
+        tool_to_handles[archive] |= set(gitlab_handles)
     return tool_to_handles.items()
 
 
@@ -52,7 +60,7 @@ def main(argv=None):
     category_info = util.parse_yaml(args.category_structure)
     print("[Participants]")
     for archive, gitlab_handles in _tool_to_gitlab_handle(category_info):
-        gitlab_handles = " ".join(f"@{handle}" for handle in gitlab_handles)
+        gitlab_handles = " ".join(f"@{handle}" for handle in sorted(gitlab_handles))
         relevant_files = [
             f.relative_to(args.base_directory)
             for f in args.base_directory.glob(f"**/{archive}")
