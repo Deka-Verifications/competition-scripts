@@ -8,7 +8,7 @@ popd || exit
 
 echo ""
 echo "Add new jobs to the queue."
-YEAR=$(scripts/parseInitConfig.py benchmark-defs/category-structure.yml --get-year)
+YEAR=$(yq --raw-output '.year' benchmark-defs/category-structure.yml)
 for VERIFIER in archives/"$YEAR"/*.zip; do
   JOB=$(basename "${VERIFIER%.zip}")
   if [[ "$JOB" =~ "val_" ]]; then

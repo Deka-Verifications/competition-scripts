@@ -11,8 +11,8 @@
 
 DIR=$(realpath "$(dirname "$0")")
 VERIFIER=$1
-COMPETITIONNAME=$("$DIR/../parseInitConfig.py" --get-comp "$DIR/../../benchmark-defs/category-structure.yml")
-YEAR=$("$DIR/../parseInitConfig.py" --get-year "$DIR/../../benchmark-defs/category-structure.yml")
+COMPETITIONNAME=$(yq --raw-output '.competition' "$DIR/../../benchmark-defs/category-structure.yml")
+YEAR=$(yq --raw-output '.year' "$DIR/../../benchmark-defs/category-structure.yml")
 TARGETSERVER=$(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]")
 TAG_PREFIX_OPTION="--match $(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]" | sed "s/-//")*"
 ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"

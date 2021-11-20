@@ -11,7 +11,7 @@
 
 TOOL=$1
 TOOL_DIR=$2
-YEAR=$(scripts/parseInitConfig.py --get-year benchmark-defs/category-structure.yml)
+YEAR=$(yq --raw-output '.year' benchmark-defs/category-structure.yml)
 ARCHIVE="$(pwd)/archives/${YEAR}/${TOOL}.zip"
 
 if [[ -z "$TOOL" || -z "$TOOL_DIR" ]]; then
