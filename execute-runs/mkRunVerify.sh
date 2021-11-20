@@ -81,8 +81,11 @@ fi
 
 date -Iseconds
 
-# Process results
+# Process results and create HTML tables
 ionice -c 3 nice "$CONTRIB_DIR"/mkRunProcessLocal.sh "$VERIFIER";
+
+# Copy results
+ionice -c 3 nice "$CONTRIB_DIR"/mkRunWebCopy.sh "$VERIFIER"
 
 # E-mail results
 ionice -c 3 nice "$CONTRIB_DIR"/mkRunMailResults.sh "$VERIFIER" --really-send-email;
