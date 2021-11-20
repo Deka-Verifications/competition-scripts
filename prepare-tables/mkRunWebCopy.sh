@@ -1,6 +1,6 @@
 # Copy the results to web server and to backup drive
 
-source $(dirname "$0")/configure.sh
+source $(dirname "$0")/../configure.sh
 
 VERIFIER=$1;
 if [[ "$VERIFIER" == "" ]]; then

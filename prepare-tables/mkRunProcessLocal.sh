@@ -8,7 +8,7 @@
 # It removes scores from the html, merge jsons, create files, replaces links to the files, compresses the html files.
 # Finally, it calls mkRunWebCopy to copy the files to the server.
 
-source $(dirname "$0")/configure.sh
+source $(dirname "$0")/../configure.sh
 
 NUMBERJOBS=6;
 #NUMBERJOBS=1;
@@ -106,7 +106,7 @@ for PROP in $PROPERTIES; do
   rm ${VALIDATIONFILES};
   rm ${TABLEDEF};
   echo "Removing score row from table ...";
-  "$PATHPREFIX"/contrib/mkRunProcessLocal-RemoveScoreStats.py --insitu ${FILERESULT}.table.html
+  "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-RemoveScoreStats.py --insitu ${FILERESULT}.table.html
   # Remember to replace the links in the tables
   echo "${FILERESULT}.table.html" >> ${HTMLFILESTOREPLACE};
   date -Iseconds;
@@ -181,7 +181,7 @@ OUTFILE="${VERIFIER}.results.${COMPETITION}.All";
                                        |& grep -v "\(No result for task\)\|\(A variable was not replaced in\)";
 rm ${TABLEDEFALL};
 echo "Removing score row from table ...";
-"$PATHPREFIX"/contrib/mkRunProcessLocal-RemoveScoreStats.py --insitu ${RESULTSVERIFICATION}/${OUTFILE}.table.html
+"$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-RemoveScoreStats.py --insitu ${RESULTSVERIFICATION}/${OUTFILE}.table.html
 # Remember to replace the links in the tables
 echo "${RESULTSVERIFICATION}/${OUTFILE}.table.html" >> ${HTMLFILESTOREPLACE};
 date -Iseconds;
@@ -191,7 +191,7 @@ ALL_HASHES=$(mktemp --suffix=-comp.json)
 # For verification results
 WITNESS_VERIFIER_HASHES=`ls -dt ${RESULTSVERIFICATION}/${VERIFIER}.????-??-??_??-??-??.$HASHES_BASENAME | head -1`;
 echo "Merging hashes maps (${WITNESS_VERIFIER_HASHES}) ..."
-nice "$PATHPREFIX"/contrib/mkRunProcessLocal-MergeJsons.py \
+nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-MergeJsons.py \
     --output "$ALL_HASHES" \
     "$WITNESS_VERIFIER_HASHES"
 date -Iseconds;
@@ -204,14 +204,14 @@ for VALIDATION in $VALIDATORLIST; do
   if [ -n "$FOUNDRESULTS" ]; then
     WITNESS_VALIDATOR_HASHES=`ls -dt ${RESULTSVALIDATION}/${VALIDATION}-${VERIFIER}.????-??-??_??-??-??.$HASHES_BASENAME | head -1`;
     echo "Merging hashes maps (${WITNESS_VALIDATOR_HASHES}) ..."
-    nice "$PATHPREFIX"/contrib/mkRunProcessLocal-MergeJsons.py \
+    nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-MergeJsons.py \
         --output "$ALL_HASHES" \
         "$ALL_HASHES" "$WITNESS_VALIDATOR_HASHES"
     date -Iseconds;
   fi
 done
 echo "Creating file store ..."
-nice "$PATHPREFIX"/contrib/mkRunProcessLocal-CreateFileStore.py \
+nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-CreateFileStore.py \
     --output "$HASHDIR_BASENAME" \
     --root-dir "$PATHPREFIX" \
     "$ALL_HASHES"
@@ -219,7 +219,7 @@ date -Iseconds;
 
 
 echo "Replacing witness links ..."
-contrib/mkRunProcessLocal-ReplaceLinks.py --no-plots $(cat "$HTMLFILESTOREPLACE") --hashmap "$ALL_HASHES" --file-store-url-prefix "${FILE_STORE_URL_PREFIX}"
+"$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal-ReplaceLinks.py --no-plots $(cat "$HTMLFILESTOREPLACE") --hashmap "$ALL_HASHES" --file-store-url-prefix "${FILE_STORE_URL_PREFIX}"
 date -Iseconds;
 
 echo "Compressing HTML tables ...";

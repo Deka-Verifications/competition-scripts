@@ -3,11 +3,11 @@
 # Assemble links for the e-mails and send result e-mails
 # Uses the file 'mkRunMailResults-MailText.txt' as template mail text.
 
-source $(dirname "$0")/configure.sh
+source $(dirname "$0")/../configure.sh
 
 VERIFIER=$1;
 
-LETTERTEXT=$(cat ${PATHPREFIX}/contrib/mkRunMailResults-MailText.txt);
+LETTERTEXT=$(cat $(dirname "$0")/mkRunMailResults-MailText.txt);
 
 if [[ $VERIFIER == "" ]]; then
   exit;
@@ -34,14 +34,14 @@ XML data:
                    | sort --reverse | sed -e "s#^\./##" -e "s/^\(.*\)$/https:\/\/${TARGETSERVER}.sosy-lab.org\/${YEAR}\/results\/results-verified\/\1/"`
 
 Log archives:
-`find . -maxdepth 1 -type d -name "${VERIFIER}.????-??-??_??-??-??.logfiles" \
-                   | sort --reverse | sed -e "s#^\./##" -e "s/^\(.*\)$/https:\/\/${TARGETSERVER}.sosy-lab.org\/${YEAR}\/results\/results-verified\/\1.zip/"`
+`find . -maxdepth 1 -type f -name "${VERIFIER}.????-??-??_??-??-??.logfiles.zip" \
+                   | sort --reverse | sed -e "s#^\./##" -e "s/^\(.*\)$/https:\/\/${TARGETSERVER}.sosy-lab.org\/${YEAR}\/results\/results-verified\/\1/"`
 " > "$TMP_FILE_LETTERTEXT";
 
     ERROR=""
     find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" \
       | sort | while read FILE; do
-      RESULT="$($CONTRIB_DIR/mkRunCheckResults.sh "$(basename "$FILE")")"
+	  RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
       ERROR="${ERROR}${RESULT}"
     done
     cd ${PATHPREFIX}/${RESULTSVALIDATION};
@@ -50,7 +50,7 @@ Log archives:
       #if [[ ! "$FILE" =~ "BitVector" ]]; then
       #  continue
       #fi
-      RESULT="$($CONTRIB_DIR/mkRunCheckResults.sh "$(basename "$FILE")")"
+      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
       #echo $RESULT
       ERROR="${ERROR}${RESULT}"
     done
