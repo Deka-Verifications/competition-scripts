@@ -69,7 +69,7 @@ RESULT_DIR=$(find . -maxdepth 1 -type d -name "${BENCHMARK_DEFINITION_FILE%.xml}
 if [ -e "$RESULT_DIR" ]; then
   ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
 else
-  echo "No results found."
+  echo "No result files found."
 fi
 
 echo "  Execution done for $TOOL."
