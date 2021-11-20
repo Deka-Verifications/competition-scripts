@@ -65,9 +65,11 @@ rm "$TMP_FILE"
 echo ""
 echo "  Post-processing $TOOL"
 cd "$OUTPUT_DIR" || exit
-RESULT_DIR=$(ls -dt "${BENCHMARK_DEFINITION_FILE%.xml}".????-??-??_??-??-??.files | head -1)
+RESULT_DIR=$(find . -maxdepth 1 -type d -name "${BENCHMARK_DEFINITION_FILE%.xml}.????-??-??_??-??-??.files" | sort --reverse | sed -e "s#^\./##" | head -1)
 if [ -e "$RESULT_DIR" ]; then
   ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
+else
+  echo "No results found."
 fi
 
 echo "  Execution done for $TOOL."
