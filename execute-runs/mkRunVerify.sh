@@ -38,12 +38,12 @@ if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
 fi
 
 pushd "$RESULTSVERIFICATION" || exit
-RESULT_DIR=$(ls -dt "$VERIFIER".????-??-??_??-??-??.files | head -1)
+RESULT_DIR=$(find . -maxdepth 1 -type d -name "$VERIFIER.????-??-??_??-??-??.files" | sort --reverse | sed -e "s#^\./##" | head -1)
 if [ -e "$RESULT_DIR" ]; then
   echo "Results in $RESULT_DIR"
 else
-  echo "No results found."
-  exit 1
+  echo "No result files found."
+  #exit 1
 fi
 popd || exit
 
