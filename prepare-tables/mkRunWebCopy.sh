@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copy the results to web server and to backup drive
 
 source $(dirname "$0")/../configure.sh
