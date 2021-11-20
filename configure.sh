@@ -2,7 +2,6 @@
 
 set -eao pipefail
 
-CONTRIB_DIR=$(realpath "contrib");
 SCRIPT_DIR=$(realpath "scripts");
 export BENCHMARKSDIR="benchmark-defs";
 

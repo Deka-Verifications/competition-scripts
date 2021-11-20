@@ -14,7 +14,7 @@
 # Step 3: Call mkRunProcessLocal.sh to post-process the results
 # Step 4: Call mkRunMailResults.sh to send results to participants
 
-source contrib/configure.sh
+source $(dirname "$0")/../configure.sh
 
 NUMBER_JOBS_VALIDATORS=4
 VERIFIER=$1;
@@ -32,7 +32,7 @@ DORUNVERIFICATION=${DORUNVERIFICATION:-"YES"};
 DORUNVALIDATION=${DORUNVALIDATION:-"YES"};
 
 if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
-  scripts/execute-runs/execute-runcollection.sh \
+  "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
     "$BENCHMARKSCRIPT $OPTIONSVERIFY" "$VERIFIER" "$VERIFIER.xml" \
     "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVERIFICATION/"
 fi
@@ -68,7 +68,7 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
       continue;
     fi
     COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo $RUNDEFS)
-    echo scripts/execute-runs/execute-runcollection.sh \
+    echo "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
            \""$COMMAND"\" "$VAL" "$VALIDATORXML" \
            "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \
            >> "$VAL_COMMANDS"
@@ -82,11 +82,11 @@ fi
 date -Iseconds
 
 # Process results and create HTML tables
-ionice -c 3 nice "$CONTRIB_DIR"/mkRunProcessLocal.sh "$VERIFIER";
+ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal.sh "$VERIFIER";
 
 # Copy results
-ionice -c 3 nice "$CONTRIB_DIR"/mkRunWebCopy.sh "$VERIFIER"
+ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunWebCopy.sh "$VERIFIER"
 
 # E-mail results
-ionice -c 3 nice "$CONTRIB_DIR"/mkRunMailResults.sh "$VERIFIER" --really-send-email;
+ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunMailResults.sh "$VERIFIER" --really-send-email;
 

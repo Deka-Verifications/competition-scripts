@@ -25,9 +25,9 @@ echo "";
 echo "Processing $VERIFIER";
 
 if [[ "$COMPETITIONNAME" == "SV-COMP" ]]; then
-  TABLETEMPLATE="./contrib/tableDefinition-single-svcomp.xml";
+  TABLETEMPLATE="$SCRIPT_DIR/prepare-tables/tableDefinition-single-svcomp.xml";
 elif [[ "$COMPETITIONNAME" == "Test-Comp" ]]; then
-  TABLETEMPLATE="./contrib/tableDefinition-single-testcomp.xml";
+  TABLETEMPLATE="$SCRIPT_DIR/prepare-tables/tableDefinition-single-testcomp.xml";
 else
   echo "Unhandled competition name $COMPETITIONNAME"
   exit 1;
