@@ -12,7 +12,8 @@
 # Step 2: Call execute-runcollection.sh to execute a number of result validators
 #         (e.g., witness-based result validation or test-suite validation)
 # Step 3: Call mkRunProcessLocal.sh to post-process the results
-# Step 4: Call mkRunMailResults.sh to send results to participants
+# Step 4: Call mkRunWebCopy.sh to copy the results to the web server and backup drive
+# Step 5: Call mkRunMailResults.sh to send results to participants
 
 source $(dirname "$0")/../configure.sh
 

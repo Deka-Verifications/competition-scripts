@@ -6,7 +6,6 @@
 # First it collects the results xmls and merges them, and then calls BenchExec's table generator on it.
 # Then it creates an HTML summarty page.
 # It removes scores from the html, merge jsons, create files, replaces links to the files, compresses the html files.
-# Finally, it calls mkRunWebCopy to copy the files to the server.
 
 source $(dirname "$0")/../configure.sh
 
