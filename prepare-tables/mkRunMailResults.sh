@@ -38,17 +38,17 @@ Log archives:
                    | sort --reverse | sed -e "s#^\./##" -e "s/^\(.*\)$/https:\/\/${TARGETSERVER}.sosy-lab.org\/${YEAR}\/results\/results-verified\/\1/"`
 " > "$TMP_FILE_LETTERTEXT";
 
+    cd "$PATHPREFIX"
     ERROR=""
-    for FILE in $(find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" | sort); do
-      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
+    for FILE in $(find "$RESULTSVERIFICATION" -maxdepth 1 -name "$VERIFIER.????-??-??_??-??-??.results.$COMPETITION*.xml.bz2" | sort); do
+      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$FILE")"
       ERROR="${ERROR}${RESULT}"
     done
-    cd ${PATHPREFIX}/${RESULTSVALIDATION};
-    for FILE in $(find . -maxdepth 1 -name "*-validate-*witnesses-${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" | sort); do
+    for FILE in $(find "$RESULTSVALIDATION" -maxdepth 1 -name "*-validate-*witnesses-$VERIFIER.????-??-??_??-??-??.results.$COMPETITION*.xml.bz2" | sort); do
       #if [[ ! "$FILE" =~ "BitVector" ]]; then
       #  continue
       #fi
-      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
+      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$FILE")"
       #echo $RESULT
       ERROR="${ERROR}${RESULT}"
     done
@@ -76,7 +76,7 @@ Log archives:
           -e "s/___EMAIL___/$EMAIL/g" \
           -e "s#___VERIFIER___#$VERIFIERNAME#g" \
           -e "s/___VERIFIERXML___/$VERIFIER.xml/g" \
-          -e "s/___ERROR___/$ERROR/g" \
+          -e "s#___ERROR___#$ERROR#g" \
           -e "s/___COMPETITIONNAME___/$COMPETITIONNAME/g" \
           -e "s/___YEAR___/$YEAR/g" \
           -e "s/___TARGETSERVER___/$TARGETSERVER/g" \
