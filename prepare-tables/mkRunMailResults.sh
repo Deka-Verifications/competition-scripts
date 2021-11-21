@@ -39,14 +39,12 @@ Log archives:
 " > "$TMP_FILE_LETTERTEXT";
 
     ERROR=""
-    find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" \
-      | sort | while read FILE; do
-	  RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
+    for FILE in $(find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" | sort); do
+      RESULT="$("$SCRIPT_DIR"/prepare-tables/mkRunCheckResults.sh "$(basename "$FILE")")"
       ERROR="${ERROR}${RESULT}"
     done
     cd ${PATHPREFIX}/${RESULTSVALIDATION};
-    find . -maxdepth 1 -name "*-validate-*witnesses-${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" \
-      | sort | while read FILE; do
+    for FILE in $(find . -maxdepth 1 -name "*-validate-*witnesses-${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}*.xml.bz2" | sort); do
       #if [[ ! "$FILE" =~ "BitVector" ]]; then
       #  continue
       #fi
