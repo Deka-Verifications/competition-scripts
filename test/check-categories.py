@@ -259,7 +259,7 @@ def parse_args(argv):
 
     args.category_structure = Path(args.category_structure)
     args.tasks_base_dir = Path(args.tasks_base_dir)
-    args.allow_unused = args.allow_unused.split(",")
+    args.allow_unused = args.allow_unused.split(",") if args.allow_unused else []
     missing_files = [f for f in [args.category_structure] if not f.exists()]
     if missing_files:
         raise ValueError(
