@@ -63,7 +63,7 @@ rm "$TMP_FILE"
 #rm -rf "$TOOL_DIR"
 
 echo ""
-echo "  Post-processing $TOOL"
+echo "  Initialize store for $TOOL"
 cd "$OUTPUT_DIR" || exit
 RESULT_DIR=$(find . -maxdepth 1 -type d -name "${BENCHMARK_DEFINITION_FILE%.xml}.????-??-??_??-??-??.files" | sort --reverse | sed -e "s#^\./##" | head -1)
 if [ -e "$RESULT_DIR" ]; then
