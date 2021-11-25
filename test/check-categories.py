@@ -4,7 +4,7 @@ from collections import namedtuple, defaultdict
 import logging
 from pathlib import Path
 import sys
-from typing import Iterable, Optional, Container
+from typing import Iterable, Optional
 import itertools
 import _util as util
 
@@ -88,7 +88,10 @@ def _is_category_empty(set_file: Path, prop: str) -> Iterable[str]:
 
 def get_set_for_category(set_name: str, tasks_dir: Path) -> Optional[Path]:
     expected_sets = [tasks_dir / lang / set_name for lang in ("c", "java")]
-    return next((s for s in expected_sets if s.exists()), None)
+    try:
+        return next((s for s in expected_sets if s.exists()))
+    except StopIteration:
+        raise ValueError(f"No .set file in tasks_dir '{tasks_dir}' for '{set_name}'")
 
 
 def _check_categories_nonempty(category_info: dict, tasks_dir: Path) -> Iterable[str]:
@@ -179,33 +182,37 @@ def check_categories(
 
 
 def check_all_tasks_used(
-    tasks_dir: Path, category_info: dict, ignore: Container[str]
+    tasks_dir: Path, category_info: dict, ignore: Iterable[str]
 ) -> Iterable[str]:
+
+    PropAndCat = namedtuple("PropAndCat", ["property", "category"])
+
+    def to_category(category_key):
+        if not "." in category_key:
+            raise ValueError(
+                f"Category key expected to be of form 'property.Name', but was '{category_key}'"
+            )
+        return PropAndCat(*category_key.split("."))
+
     used_directories = defaultdict(set)
     for info in category_info["categories"].values():
         properties = info["properties"]
         if not isinstance(properties, list):
             properties = [properties]
 
-        PropAndCat = namedtuple("PropAndCat", ["property", "category"])
         # by checking that there's a '.' in the category name,
         # we only check base categories and ignore other meta categories
         # that are used as sub-categories of the current meta category.
-        used_categories = [
-            PropAndCat(*c.split("."))
-            for c in info["categories"]
-            if "." in c and c not in ignore
-        ]
+        used_categories = [to_category(c) for c in info["categories"] if "." in c]
+
+        ignored_categories = [to_category(c) for c in ignore]
 
         for prop in properties:
             used_set_files = [
                 get_set_for_category(c.category + ".set", tasks_dir)
-                for c in used_categories
+                for c in used_categories + ignored_categories
                 if c.property == prop
             ]
-            assert (
-                None not in used_set_files
-            )  # should be ensured by previous _check_categories_nonempty
             used_directories[prop] |= {
                 t.parent
                 for set_file in used_set_files
@@ -252,6 +259,7 @@ def parse_args(argv):
 
     args.category_structure = Path(args.category_structure)
     args.tasks_base_dir = Path(args.tasks_base_dir)
+    args.allow_unused = args.allow_unused.split(",") if args.allow_unused else []
     missing_files = [f for f in [args.category_structure] if not f.exists()]
     if missing_files:
         raise ValueError(
