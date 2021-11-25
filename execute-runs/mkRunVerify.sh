@@ -59,6 +59,14 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
     echo "Running validation by $VALIDATOR ..."
     VALIDATORXML="${VALIDATORXMLTEMPLATE}-${VERIFIER}.xml";
     sed "s/LOGDIR/$RESULT_DIR/g" "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXMLTEMPLATE.xml" > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
+    if [[ "$VALIDATOR" == "witnesslint"  &&  "$(yq -r ".verifiers.\"$VERIFIER\".\"jury-member\".name" benchmark-defs/category-structure.yml)" == "Hors Concours" ]]; then
+      echo "Witness-linter call for hors-concours participation:"
+      echo "Insert option into benchmark definition for witnesslint to not perform recent checks on hors-concours participants."
+      VALIDATORBENCHDEF=$(cat "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML")
+      echo "$VALIDATORBENCHDEF" \
+	| xmlstarlet edit --append '/benchmark/option[@name="--ignoreSelfLoops"]' --type elem -n 'option' --insert '/benchmark/option[not(@name)]' --type attr -n 'name' --value '--excludeRecentChecks' \
+        > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
+    fi
     echo "";
     echo "Processing validation $VALIDATORXML ...";
     # Create a list of task-sets of the verifier, formatted such that it can be passed to BenchExec.
