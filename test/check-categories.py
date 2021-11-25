@@ -4,7 +4,7 @@ from collections import namedtuple, defaultdict
 import logging
 from pathlib import Path
 import sys
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Container
 import itertools
 import _util as util
 
@@ -178,7 +178,9 @@ def check_categories(
     return errors
 
 
-def check_all_tasks_used(tasks_dir: Path, category_info: dict) -> Iterable[str]:
+def check_all_tasks_used(
+    tasks_dir: Path, category_info: dict, ignore: Container[str]
+) -> Iterable[str]:
     used_directories = defaultdict(set)
     for info in category_info["categories"].values():
         properties = info["properties"]
@@ -190,7 +192,9 @@ def check_all_tasks_used(tasks_dir: Path, category_info: dict) -> Iterable[str]:
         # we only check base categories and ignore other meta categories
         # that are used as sub-categories of the current meta category.
         used_categories = [
-            PropAndCat(*c.split(".")) for c in info["categories"] if "." in c
+            PropAndCat(*c.split("."))
+            for c in info["categories"]
+            if "." in c and c not in ignore
         ]
 
         for prop in properties:
@@ -231,6 +235,12 @@ def parse_args(argv):
         help="category-structure.yml to use",
     )
     parser.add_argument(
+        "--allow-unused",
+        dest="allow_unused",
+        default="",
+        help="comma-separated list of categories that may be left out from category structure",
+    )
+    parser.add_argument(
         "--tasks-directory",
         dest="tasks_base_dir",
         default="sv-benchmarks",
@@ -259,7 +269,10 @@ def main(argv=None):
     participants = category_info["verifiers"]
     errors = check_categories(category_info, args.tasks_base_dir, participants)
     errors = itertools.chain(
-        errors, check_all_tasks_used(args.tasks_base_dir, category_info)
+        errors,
+        check_all_tasks_used(
+            args.tasks_base_dir, category_info, ignore=args.allow_unused
+        ),
     )
     success = True
     for msg in errors:
