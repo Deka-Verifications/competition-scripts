@@ -65,11 +65,17 @@ rm "$TMP_FILE"
 echo ""
 echo "  Initialize store for $TOOL"
 cd "$OUTPUT_DIR" || exit
-RESULT_DIR=$(find . -maxdepth 1 -type d -name "${BENCHMARK_DEFINITION_FILE%.xml}.????-??-??_??-??-??.files" | sort --reverse | sed -e "s#^\./##" | head -1)
-if [ -e "$RESULT_DIR" ]; then
-  ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
+RESULT_DIR=$(find . -maxdepth 1 -type f -name "${BENCHMARK_DEFINITION_FILE%.xml}.????-??-??_??-??-??.logfiles.zip" | sort --reverse | sed -e "s#^\./##" -e "s/\.logfiles\.zip$/.files/" | head -1)
+if [[ "$RESULT_DIR" == "" ]]; then
+  echo "    No results (logs) found."
 else
-  echo "No result files found."
+  if [ -e "$RESULT_DIR" ]; then
+    echo "    Initialize store with verification tasks and result files in $RESULT_DIR."
+  else
+    echo "    No result files (witnesses) found but results (logs) found; initialize store only with verification tasks."
+    mkdir "$RESULT_DIR"
+  fi
+  ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
 fi
 
 echo "  Execution done for $TOOL."
