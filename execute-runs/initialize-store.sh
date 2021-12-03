@@ -36,5 +36,6 @@ $SCRIPTS_DIR/create-uniform-witness-structure.py \
 $SCRIPTS_DIR/create-hashes.py \
   -o "${LOG_DIR%.files}.$HASHES_BASENAME" \
   --root-dir "$ROOT_DIR" \
-  "$LOG_DIR"
+  "$LOG_DIR" \
+  "$WITNESSTARGET"
 
