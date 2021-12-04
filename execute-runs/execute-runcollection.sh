@@ -13,7 +13,6 @@
 #   witness name
 #   witness glob suffix
 #   output directory
-#   waiting time (optional)
 
 BENCHEXEC_COMMAND=$1
 TOOL=$2
@@ -21,7 +20,7 @@ BENCHMARK_DEFINITION_FILE=$3
 WITNESS_TARGET=$4
 WITNESS_GLOB_SUFFIX=$5
 OUTPUT_DIR=$6
-WAIT_TIME=$((($7 - 1) * 30 + 10));
+
 SCRIPTS_DIR=$(realpath "$(dirname "$0")")
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
 
@@ -36,10 +35,8 @@ if [[ ! -e "$ROOT_DIR/benchmark-defs/$BENCHMARK_DEFINITION_FILE" ]]; then
   exit 1
 fi
 
-if [[ $WAIT_TIME -gt 0 ]]; then
-  echo "$TOOL with benchmark definition $BENCHMARK_DEFINITION_FILE waits $WAIT_TIME seconds first.";
-  sleep $WAIT_TIME;
-fi
+echo "$TOOL with benchmark definition $BENCHMARK_DEFINITION_FILE waits 10 seconds first.";
+sleep 10;
 
 
 TOOL_DIR=$(mktemp --directory --tmpdir="./bin/" "$TOOL-XXXXXXXXXX")

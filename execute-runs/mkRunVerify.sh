@@ -86,7 +86,7 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
   done
   echo "All validation tasks created and ready to be executed.";
   echo "";
-  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} {%} \|\& tee -a ./results-logs/"$VERIFIER"-{%}.log
+  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} \|\& tee -a ./results-logs/"$VERIFIER"-{%}.log
   rm "$VAL_COMMANDS"
 fi
 
