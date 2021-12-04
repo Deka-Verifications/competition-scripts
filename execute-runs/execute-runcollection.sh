@@ -7,24 +7,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # This script gets the following parameters:
-#   command (benchmark.py follows by its options, external users can pass benchexec without parameters here),
+#   benchmarking script (I use `benchmark.py` here, to execute the benchmark of VerifierCloud, others can pass benchexec here)
 #   tool (matching name of benchmark definition XML file)
 #   benchmark definition (XML file)
 #   witness name
 #   witness glob suffix
 #   output directory
+#   parameters for benchmarking script (optional)
 
-BENCHEXEC_COMMAND=$1
+BENCHEXEC_SCRIPT=$1
 TOOL=$2
 BENCHMARK_DEFINITION_FILE=$3
 WITNESS_TARGET=$4
 WITNESS_GLOB_SUFFIX=$5
 OUTPUT_DIR=$6
+BENCHEXEC_OPTIONS=$7
 
 SCRIPTS_DIR=$(realpath "$(dirname "$0")")
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
 
-if [[ "$BENCHEXEC_COMMAND" == "" || "$TOOL" == "" || "$BENCHMARK_DEFINITION_FILE" == "" ||
+if [[ "$BENCHEXEC_SCRIPT" == "" || "$TOOL" == "" || "$BENCHMARK_DEFINITION_FILE" == "" ||
       "$WITNESS_TARGET" == "" || "$WITNESS_GLOB_SUFFIX" == "" || "$OUTPUT_DIR" == "" ]]; then
   echo "Usage: $0 <command> <tool> <benchmark definition> <witness name> <witness glob suffix> <output directory>"
   exit 1
@@ -55,7 +57,7 @@ if [[ ! -e $OUTPUT_DIR ]]; then
 fi
 TMP_FILE=$(mktemp --suffix=-provenance.txt)
 "$SCRIPTS_DIR/mkProvenanceInfo.sh" "$TOOL" > "$TMP_FILE"
-$BENCHEXEC_COMMAND "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
+$BENCHEXEC_SCRIPT $BENCHEXEC_OPTIONS "../../benchmark-defs/$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
 rm "$TMP_FILE"
 #rm -rf "$TOOL_DIR"
 

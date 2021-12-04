@@ -36,8 +36,8 @@ if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
   # To limit benchmark to a single task-set, uncomment the next line.
   # OPTIONSVERIFY="$OPTIONSVERIFY -t ReachSafety-ControlFlow"
   "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
-    "$BENCHMARKSCRIPT $OPTIONSVERIFY" "$VERIFIER" "$VERIFIER.xml" \
-    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVERIFICATION/"
+    "$BENCHMARKSCRIPT" "$VERIFIER" "$VERIFIER.xml" \
+    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVERIFICATION/" "$OPTIONSVERIFY"
 fi
 
 pushd "$RESULTSVERIFICATION" || exit
@@ -78,10 +78,9 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
       echo "No validation support for Java categories.";
       continue;
     fi
-    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo $RUNDEFS)
     echo "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
-           \""$COMMAND"\" "$VAL" "$VALIDATORXML" \
-           "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \
+           "$BENCHMARKSCRIPT" "$VAL" "$VALIDATORXML" \
+	   "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \""$OPTIONSVALIDATE "$(echo $RUNDEFS)\" \
            >> "$VAL_COMMANDS"
   done
   echo "All validation tasks created and ready to be executed.";
