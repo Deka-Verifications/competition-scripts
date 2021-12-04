@@ -13,7 +13,7 @@
 #   witness name
 #   witness glob suffix
 #   output directory
-#   parameters for benchmarking script (optional)
+#   the rest are parameters for the benchmarking script (optional) and will be passed to it directly
 
 BENCHEXEC_SCRIPT=$1
 TOOL_ARCHIVE=$2
@@ -21,7 +21,8 @@ BENCHMARK_DEFINITION_FILE=$3
 WITNESS_TARGET=$4
 WITNESS_GLOB_SUFFIX=$5
 OUTPUT_DIR=$6
-BENCHEXEC_OPTIONS=$7
+shift 6
+BENCHEXEC_OPTIONS="$*"
 
 SCRIPTS_DIR=$(realpath "$(dirname "$0")")
 ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")

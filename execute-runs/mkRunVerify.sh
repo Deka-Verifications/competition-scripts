@@ -79,7 +79,7 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
     fi
     echo "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
 	    "$BENCHMARKSCRIPT" "$(dirname "$0")/../../archives/$YEAR/val_$VALIDATOR.zip" "$VALIDATORXML" \
-	    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "$(dirname "$0")/../../$RESULTSVALIDATION/" \""$OPTIONSVALIDATE "$(echo $RUNDEFS)\" \
+	    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "$(dirname "$0")/../../$RESULTSVALIDATION/" "$OPTIONSVALIDATE" $(echo $RUNDEFS) \
 	    >> "$VAL_COMMANDS"
   done
   echo "All validation tasks created and ready to be executed.";
