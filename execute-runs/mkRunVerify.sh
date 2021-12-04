@@ -15,7 +15,7 @@
 # Step 4: Call mkRunWebCopy.sh to copy the results to the web server and backup drive
 # Step 5: Call mkRunMailResults.sh to send results to participants
 
-source $(dirname "$0")/../configure.sh
+source "$(dirname "$0")"/../configure.sh
 
 NUMBER_JOBS_VALIDATORS=4
 VERIFIER=$1;

@@ -63,7 +63,7 @@ else
   exit 1
 fi
 
-echo "$TOOL with benchmark definition $(basename $BENCHMARK_DEFINITION_FILE) waits 10 seconds first.";
+echo "$TOOL with benchmark definition $(basename "$BENCHMARK_DEFINITION_FILE") waits 10 seconds first.";
 sleep 10;
 
 
