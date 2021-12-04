@@ -73,13 +73,14 @@ echo "  Installing $TOOL in $TOOL_DIR"
 echo ""
 echo "  Executing $TOOL"
 
+TMP_FILE=$(mktemp --suffix=-provenance.txt)
+"$SCRIPTS_DIR/mkProvenanceInfo.sh" "$TOOL_ARCHIVE" > "$TMP_FILE"
+
 cd "$TOOL_DIR" || exit
 if [[ ! -e $OUTPUT_DIR ]]; then
   echo "Output folder $OUTPUT_DIR does not exist."
   exit 1
 fi
-TMP_FILE=$(mktemp --suffix=-provenance.txt)
-"$SCRIPTS_DIR/mkProvenanceInfo.sh" "$TOOL" > "$TMP_FILE"
 $BENCHEXEC_SCRIPT $BENCHEXEC_OPTIONS "$BENCHMARK_DEFINITION_FILE" -o "$OUTPUT_DIR" --description-file "$TMP_FILE"
 rm "$TMP_FILE"
 #rm -rf "$TOOL_DIR"
