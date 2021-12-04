@@ -19,7 +19,7 @@ source $(dirname "$0")/../configure.sh
 
 NUMBER_JOBS_VALIDATORS=4
 VERIFIER=$1;
-BENCHMARKSCRIPT="../../benchexec/contrib/vcloud-benchmark.py";
+BENCHMARKSCRIPT="$(dirname "$0")/../../benchexec/contrib/vcloud-benchmark.py";
 
 if [[ $VERIFIER == "" ]]; then
   echo "Usage: $0 VERIFIER"
@@ -36,8 +36,8 @@ if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
   # To limit benchmark to a single task-set, uncomment the next line.
   # OPTIONSVERIFY="$OPTIONSVERIFY -t ReachSafety-ControlFlow"
   "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
-    "$BENCHMARKSCRIPT $OPTIONSVERIFY" "$VERIFIER" "$VERIFIER.xml" \
-    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVERIFICATION/"
+	  "$BENCHMARKSCRIPT" "$(dirname "$0")/../../archives/$YEAR/$VERIFIER.zip" "$(dirname "$0")/../../benchmark-defs/$VERIFIER.xml" \
+	  "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "$(dirname "$0")/../../$RESULTSVERIFICATION/" "$OPTIONSVERIFY"
 fi
 
 pushd "$RESULTSVERIFICATION" || exit
@@ -56,18 +56,17 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
   VAL_COMMANDS=$(mktemp --suffix=-validation-runs.txt)
   for VALIDATORXMLTEMPLATE in $VALIDATORLIST; do
     VALIDATOR="${VALIDATORXMLTEMPLATE%-validate-*}"
-    VAL="val_$VALIDATOR"
     echo "";
     echo "Running validation by $VALIDATOR ..."
-    VALIDATORXML="${VALIDATORXMLTEMPLATE}-${VERIFIER}.xml";
-    sed "s/LOGDIR/$RESULT_DIR/g" "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXMLTEMPLATE.xml" > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
+    VALIDATORXML="$(dirname "$0")/../../benchmark-defs/${VALIDATORXMLTEMPLATE}-${VERIFIER}.xml";
+    sed "s/LOGDIR/$RESULT_DIR/g" "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXMLTEMPLATE.xml" > "$VALIDATORXML"
     if [[ "$VALIDATOR" == "witnesslint"  &&  "$(yq -r ".verifiers.\"$VERIFIER\".\"jury-member\".name" benchmark-defs/category-structure.yml)" == "Hors Concours" ]]; then
       echo "Witness-linter call for hors-concours participation:"
       echo "Insert option into benchmark definition for witnesslint to not perform recent checks on hors-concours participants."
-      VALIDATORBENCHDEF=$(cat "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML")
+      VALIDATORBENCHDEF=$(cat "$VALIDATORXML")
       echo "$VALIDATORBENCHDEF" \
 	| xmlstarlet edit --append '/benchmark/option[@name="--ignoreSelfLoops"]' --type elem -n 'option' --insert '/benchmark/option[not(@name)]' --type attr -n 'name' --value '--excludeRecentChecks' \
-        > "$PATHPREFIX/$BENCHMARKSDIR/$VALIDATORXML"
+        > "$VALIDATORXML"
     fi
     echo "";
     echo "Processing validation $VALIDATORXML ...";
@@ -78,15 +77,14 @@ if [[ "${DORUNVALIDATION}" == "YES" ]]; then
       echo "No validation support for Java categories.";
       continue;
     fi
-    COMMAND="$BENCHMARKSCRIPT $OPTIONSVALIDATE "$(echo $RUNDEFS)
     echo "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
-           \""$COMMAND"\" "$VAL" "$VALIDATORXML" \
-           "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "../../$RESULTSVALIDATION/" \
-           >> "$VAL_COMMANDS"
+	    "$BENCHMARKSCRIPT" "$(dirname "$0")/../../archives/$YEAR/val_$VALIDATOR.zip" "$VALIDATORXML" \
+	    "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "$(dirname "$0")/../../$RESULTSVALIDATION/" "$OPTIONSVALIDATE" $(echo $RUNDEFS) \
+	    >> "$VAL_COMMANDS"
   done
   echo "All validation tasks created and ready to be executed.";
   echo "";
-  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} {%} \|\& tee -a ./results-logs/"$VERIFIER"-{%}.log
+  cat "$VAL_COMMANDS" | parallel --linebuffer --jobs "$NUMBER_JOBS_VALIDATORS" {} \|\& tee -a ./results-logs/"$VERIFIER"-{%}.log
   rm "$VAL_COMMANDS"
 fi
 

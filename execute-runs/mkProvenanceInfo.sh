@@ -10,16 +10,20 @@
 # @description Prepare Phase: write info about competition and components used to file
 
 DIR=$(realpath "$(dirname "$0")")
-VERIFIER=$1
+TOOL_ARCHIVE=$1
 COMPETITIONNAME=$(yq --raw-output '.competition' "$DIR/../../benchmark-defs/category-structure.yml")
 YEAR=$(yq --raw-output '.year' "$DIR/../../benchmark-defs/category-structure.yml")
 TARGETSERVER=$(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]")
 TAG_PREFIX_OPTION="--match $(echo "$COMPETITIONNAME" | tr "[:upper:]" "[:lower:]" | sed "s/-//")*"
-ARCHIVE="$DIR/../../archives/$YEAR/$VERIFIER.zip"
 GIT_REPOS="archives sv-benchmarks benchexec scripts ."
 
-if [ -z "$VERIFIER" ]; then
+if [ -z "$TOOL_ARCHIVE" ]; then
   echo "Error: No verifier specified."
+  exit 1
+fi
+
+if [[ ! -e "$TOOL_ARCHIVE" ]]; then
+  echo "Tool archive $TOOL_ARCHIVE not found."
   exit 1
 fi
 
@@ -40,5 +44,5 @@ for repo in $GIT_REPOS; do
   )
 done
 
-echo "Archive: $VERIFIER.zip  DATE: $(date -Iminutes --date=@"$(stat --format=%Y "$ARCHIVE")")  SHA1: $(shasum "$ARCHIVE" | sed "s/\(.\{10\}\).*/\1/")..."
+echo "Archive: $(basename "$TOOL_ARCHIVE")  DATE: $(date -Iminutes --date=@"$(stat --format=%Y "$TOOL_ARCHIVE")")  SHA1: $(shasum "$TOOL_ARCHIVE" | sed "s/\(.\{10\}\).*/\1/")..."
 echo ""

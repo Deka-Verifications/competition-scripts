@@ -9,20 +9,30 @@
 # @title Install Tool Archive
 # @description Unzips and checks the structure of tool archive.
 
-TOOL=$1
-TOOL_DIR=$2
+TOOL_ARCHIVE="$(realpath "$(dirname "$0")/../../$1")"
+TOOL_DIR="$2"
 YEAR=$(yq --raw-output '.year' benchmark-defs/category-structure.yml)
 ARCHIVE="$(pwd)/archives/${YEAR}/${TOOL}.zip"
 
-if [[ -z "$TOOL" || -z "$TOOL_DIR" ]]; then
+if [[ -z "$TOOL_ARCHIVE" || -z "$TOOL_DIR" ]]; then
   echo "Usage: $0 <tool> <install directory>"
   exit 1
 fi
 
+if [[ ! -e "$TOOL_ARCHIVE" ]]; then
+  echo "Tool archive $TOOL_ARCHIVE does not exist."
+  exit 1
+fi
+
+if [[ ! -e "$TOOL_DIR" ]]; then
+  echo "Tool directory $TOOL_DIR does not exist."
+  exit 1
+fi
+
 # Unzip
-echo "Installing $ARCHIVE ..."
+echo "Installing $TOOL_ARCHIVE ..."
 cd "$TOOL_DIR" || exit
-unzip "$ARCHIVE"
+unzip "$TOOL_ARCHIVE"
 # Check structure
 if [[ $(find . -mindepth 1 -maxdepth 1 | wc -l) == 1 ]]; then
   echo "Info: One folder found in archive."
