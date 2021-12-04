@@ -34,7 +34,7 @@ DORUNVALIDATION=${DORUNVALIDATION:-"YES"};
 
 if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
   # To limit benchmark to a single task-set, uncomment the next line.
-  # OPTIONSVERIFY="$OPTIONSVERIFY -t ReachSafety-ControlFlow"
+  # OPTIONSVERIFY="$OPTIONSVERIFY --tasks ReachSafety-ControlFlow"
   "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
 	  "$BENCHMARKSCRIPT" "$(dirname "$0")/../../archives/$YEAR/$VERIFIER.zip" "$(dirname "$0")/../../benchmark-defs/$VERIFIER.xml" \
 	  "$WITNESSTARGET" "$WITNESSGLOBSUFFIX" "$(dirname "$0")/../../$RESULTSVERIFICATION/" "$OPTIONSVERIFY"
