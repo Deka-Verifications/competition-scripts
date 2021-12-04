@@ -12,7 +12,6 @@ WITNESSTARGET=$2;
 WITNESSGLOBSUFFIX=$3;
 ROOT_DIR=$(realpath "$(dirname "$0")/../..")
 SCRIPTS_DIR=$(dirname "$0")
-PYTHONPATH="$ROOTDIR/benchexec"
 HASHES_BASENAME="fileHashes.json"
 
 if [[ "$LOG_DIR" == "" || "$WITNESSTARGET" == "" || "$WITNESSGLOBSUFFIX" == "" ]]; then

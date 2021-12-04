@@ -12,7 +12,6 @@
 TOOL_ARCHIVE="$(realpath "$(dirname "$0")/../../$1")"
 TOOL_DIR="$2"
 YEAR=$(yq --raw-output '.year' benchmark-defs/category-structure.yml)
-ARCHIVE="$(pwd)/archives/${YEAR}/${TOOL}.zip"
 
 if [[ -z "$TOOL_ARCHIVE" || -z "$TOOL_DIR" ]]; then
   echo "Usage: $0 <tool> <install directory>"

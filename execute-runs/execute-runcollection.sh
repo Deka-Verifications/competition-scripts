@@ -25,7 +25,6 @@ shift 6
 BENCHEXEC_OPTIONS="$*"
 
 SCRIPTS_DIR=$(realpath "$(dirname "$0")")
-ROOT_DIR=$(realpath "$SCRIPTS_DIR/../..")
 
 if [[ "$BENCHEXEC_SCRIPT" == "" || "$TOOL_ARCHIVE" == "" || "$BENCHMARK_DEFINITION_FILE" == "" ||
       "$WITNESS_TARGET" == "" || "$WITNESS_GLOB_SUFFIX" == "" || "$OUTPUT_DIR" == "" ]]; then
