@@ -68,7 +68,7 @@ sleep 10;
 
 echo ""
 echo "  Installing $TOOL in $TOOL_DIR"
-"$SCRIPTS_DIR/mkInstall.sh" "$TOOL" "$TOOL_DIR"
+"$SCRIPTS_DIR/mkInstall.sh" "$TOOL_ARCHIVE" "$TOOL_DIR"
 
 echo ""
 echo "  Executing $TOOL"
