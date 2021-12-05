@@ -71,7 +71,7 @@ if [ -e /data ]; then
   # on container creation
   BENCHEXECOPTIONS="${BENCHEXECOPTIONS} --read-only-dir /data"
 fi
-export OPTIONSVERIFY="${BENCHEXECOPTIONS} ${LIMITS} --vcloudPriority IDLE";
-export OPTIONSVALIDATE="${BENCHEXECOPTIONS} ${LIMITSVALIDATION} --vcloudPriority LOW";
+export OPTIONSVERIFY="${BENCHEXECOPTIONS} ${LIMITS} --vcloudPriority HIGH";
+export OPTIONSVALIDATE="${BENCHEXECOPTIONS} ${LIMITSVALIDATION} --vcloudPriority URGENT";
 
 
