@@ -20,6 +20,8 @@ export BINDIR="bin";
 export PYTHONPATH="${PATHPREFIX}/benchexec";
 export BENCHEXEC_PATH="${PATHPREFIX}/benchexec";
 
+ACTIONS="PRODUCE_RESULTS VALIDATE_RESULTS PREPARE_RESULTS"
+
 ADDRESS_BOOK=~/.competition-address-book.txt
 USER_CONFIG=~/.competition-configure.sh
 if [ -e "$USER_CONFIG" ]; then

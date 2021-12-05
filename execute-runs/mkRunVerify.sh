@@ -32,7 +32,7 @@ echo "($VERIFIER)  Run started";
 DORUNVERIFICATION=${DORUNVERIFICATION:-"YES"};
 DORUNVALIDATION=${DORUNVALIDATION:-"YES"};
 
-if [[ "${DORUNVERIFICATION}" == "YES" ]]; then
+if [[ "$ACTIONS" =~ "PRODUCE_RESULTS" ]]; then
   # To limit benchmark to a single task-set, uncomment the next line.
   # OPTIONSVERIFY="$OPTIONSVERIFY --tasks ReachSafety-ControlFlow"
   "$SCRIPT_DIR"/execute-runs/execute-runcollection.sh \
@@ -50,7 +50,7 @@ else
 fi
 popd || exit
 
-if [[ "${DORUNVALIDATION}" == "YES" ]]; then
+if [[ "$ACTIONS" =~ "VALIDATE_RESULTS" ]]; then
   echo "";
   echo "Processing validation of $VERIFIER's results in $RESULT_DIR ...";
   VAL_COMMANDS=$(mktemp --suffix=-validation-runs.txt)
@@ -90,12 +90,18 @@ fi
 
 date -Iseconds
 
-# Process results and create HTML tables
-ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal.sh "$VERIFIER";
+if [[ "$ACTIONS" =~ "PREPARE_RESULTS" ]]; then
+  # Process results and create HTML tables
+  ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunProcessLocal.sh "$VERIFIER";
+fi
 
-# Copy results
-ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunWebCopy.sh "$VERIFIER"
+if [[ "$ACTIONS" =~ "PUBLISH_RESULTS" ]]; then
+  # Copy results
+  ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunWebCopy.sh "$VERIFIER"
+fi
 
-# E-mail results
-ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunMailResults.sh "$VERIFIER" --really-send-email;
+if [[ "$ACTIONS" =~ "SEND_RESULTS" ]]; then
+  # E-mail results
+  ionice -c 3 nice "$SCRIPT_DIR"/prepare-tables/mkRunMailResults.sh "$VERIFIER" --really-send-email;
+fi
 
