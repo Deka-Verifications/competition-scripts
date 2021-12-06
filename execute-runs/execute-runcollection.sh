@@ -86,16 +86,16 @@ rm "$TMP_FILE"
 #rm -rf "$TOOL_DIR"
 
 echo ""
-echo "  Initialize store for $TOOL"
+echo "  Initialize fileHashes for $TOOL"
 cd "$OUTPUT_DIR" || exit
-RESULT_DIR=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.logfiles.zip" | sort --reverse | sed -e "s#^\./##" -e "s/\.logfiles\.zip$/.files/" | head -1)
+RESULT_DIR=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.results.txt" | sort --reverse | sed -e "s#^\./##" -e "s/\.results\.txt$/.files/" | head -1)
 if [[ "$RESULT_DIR" == "" ]]; then
-  echo "    No results (logs) found."
+  echo "    No results (txt) found."
 else
   if [ -e "$RESULT_DIR" ]; then
-    echo "    Initialize store with verification tasks and result files in $RESULT_DIR."
+    echo "    Initialize fileHashes with verification tasks and result files in $RESULT_DIR."
   else
-    echo "    No result files (witnesses) found but results (logs) found; initialize store only with verification tasks."
+    echo "    No result files (witnesses) found but results (txt) found ($RESULT_DIR); initialize fileHashes only with verification tasks."
     mkdir "$RESULT_DIR"
   fi
   ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
