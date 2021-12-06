@@ -88,17 +88,21 @@ rm "$TMP_FILE"
 echo ""
 echo "  Initialize fileHashes for $TOOL"
 cd "$OUTPUT_DIR" || exit
-RESULT_DIR=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.results.txt" | sort --reverse | sed -e "s#^\./##" -e "s/\.results\.txt$/.files/" | head -1)
-if [[ "$RESULT_DIR" == "" ]]; then
+RESULT_ID=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.results.txt" | sort --reverse | sed -e "s#^\./##" -e "s/\.results\.txt$//" | head -1)
+RESULT_LOGS="$RESULT_ID.logfiles.zip"
+RESULT_FILES="$RESULT_ID.files"
+if [[ "$RESULT_ID" == "" ]]; then
   echo "    No results (txt) found."
-else
-  if [ -e "$RESULT_DIR" ]; then
-    echo "    Initialize fileHashes with verification tasks and result files in $RESULT_DIR."
+elif [ -e "$RESULT_LOGS" ]; then
+  if [ -e "$RESULT_FILES" ]; then
+    echo "    Initialize fileHashes with verification tasks and result files in $RESULT_FILES."
   else
-    echo "    No result files (witnesses) found but results (txt) found ($RESULT_DIR); initialize fileHashes only with verification tasks."
-    mkdir "$RESULT_DIR"
+    echo "    No result files (witnesses) found but results (logs) found ($RESULT_LOGS); initialize fileHashes only with verification tasks."
+    mkdir "$RESULT_FILES"
   fi
-  ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_DIR" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
+  ionice -c 3 nice "$SCRIPTS_DIR/initialize-store.sh" "$RESULT_FILES" "$WITNESS_TARGET" "$WITNESS_GLOB_SUFFIX"
+else
+  echo "    No results (logs) exist for $RESULT_ID."
 fi
 
 echo "  Execution done for $TOOL."
