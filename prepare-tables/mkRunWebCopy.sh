@@ -33,6 +33,7 @@ rsync -axzq "$RESULTSVERIFICATION/$VERIFIER.results.$COMPETITION.All.table.html.
 rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.html.gz" --exclude="*" "$SOURCE" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.txt"    --exclude="*" "$SOURCE" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.json"    --exclude="*" "$SOURCE" "$TARGET"
 
 echo "... $RESULTSVALIDATION"
@@ -49,6 +50,7 @@ for VALIDATION in $VALIDATORLIST; do
   echo "Results: $RESULT_DIR"
   rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
   rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
+  rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.txt"    --exclude="*" "$SOURCE" "$TARGET"
   rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.json"    --exclude="*" "$SOURCE" "$TARGET"
 done
 
