@@ -88,7 +88,7 @@ rm "$TMP_FILE"
 echo ""
 echo "  Initialize fileHashes for $TOOL"
 cd "$OUTPUT_DIR" || exit
-RESULT_ID=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.results.txt" | sort --reverse | sed -e "s#^\./##" -e "s/\.results\.txt$//" | head -1)
+RESULT_ID=$(find . -maxdepth 1 -type f -name "$(basename "${BENCHMARK_DEFINITION_FILE%.xml}").????-??-??_??-??-??.results.*txt" | sort --reverse | sed -e "s#^\./##" -e "s/\.results\..*txt$//" | head -1)
 RESULT_LOGS="$RESULT_ID.logfiles.zip"
 RESULT_FILES="$RESULT_ID.files"
 if [[ "$RESULT_ID" == "" ]]; then
