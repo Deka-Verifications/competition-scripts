@@ -65,7 +65,7 @@ else
   echo "Unhandled competition $COMPETITIONNAME" ; false
 fi
 
-BENCHEXECOPTIONS="--read-only-dir / --hidden-dir /home --overlay-dir . --vcloudAdditionalFiles . --maxLogfileSize 2MB --vcloudClientHeap 4000 --cgroupAccess ${TESTCOMPOPTION}";
+BENCHEXECOPTIONS="--read-only-dir / --hidden-dir /home --overlay-dir . --vcloudAdditionalFiles . --maxLogfileSize 2MB --vcloudClientHeap 3000 --cgroupAccess ${TESTCOMPOPTION}";
 if [ -e /data ]; then
   # If scratch folder 'data' exists, make it read-only to avoid benchexec errors
   # on container creation
