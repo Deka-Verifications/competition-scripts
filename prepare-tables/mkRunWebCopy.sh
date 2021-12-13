@@ -20,38 +20,34 @@ echo "Copy to web server ..."
 echo "... $RESULTSVERIFICATION"
 SOURCE="$PATHPREFIX/$RESULTSVERIFICATION/"
 TARGET="www-comp.sosy.ifi.lmu.de:/srv/web/data/$TARGETDIR/$YEAR/results/$RESULTSVERIFICATION/"
-if ! ls -dt "$RESULTSVERIFICATION/$VERIFIER".????-??-??_??-??-??.logfiles.zip &> /dev/null; then
-  echo "No results for $VERIFIER."
+RESULT_ID=$(find "$RESULTSVERIFICATION" -maxdepth 1 -type f -name "$VERIFIER.????-??-??_??-??-??.results.*txt" | sort --reverse | sed -e "s#^.*/##" -e "s/\.results\..*txt$//" | head -1)
+if [[ "$RESULT_ID" == "" ]]; then
+  echo "    No results (txt) found for $VERIFIER."
   exit
 fi
-RESULT_DIR=$(ls -dt "$RESULTSVERIFICATION/$VERIFIER".????-??-??_??-??-??.logfiles.zip | head -1)
-RESULT_DIR="${RESULT_DIR%.logfiles.zip}"
-RESULT_DIR="${RESULT_DIR#*/}"
-echo "Results: $RESULT_DIR"
+echo "Results: $RESULT_ID"
 rsync -axzq "$HTMLOVERVIEW" "$TARGET"
 rsync -axzq "$RESULTSVERIFICATION/$VERIFIER.results.$COMPETITION.All.table.html.gz" "$TARGET"
-rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.html.gz" --exclude="*" "$SOURCE" "$TARGET"
-rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
-rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
-rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.txt"    --exclude="*" "$SOURCE" "$TARGET"
-rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.json"    --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.html.gz" --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.txt"     --exclude="*" "$SOURCE" "$TARGET"
+rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.json"    --exclude="*" "$SOURCE" "$TARGET"
 
 echo "... $RESULTSVALIDATION"
 SOURCE="$PATHPREFIX/$RESULTSVALIDATION/"
 TARGET="www-comp.sosy.ifi.lmu.de:/srv/web/data/$TARGETDIR/$YEAR/results/$RESULTSVALIDATION/"
 for VALIDATION in $VALIDATORLIST; do
-  if ! ls -dt1 "$RESULTSVALIDATION/${VALIDATION}-${VERIFIER}".????-??-??_??-??-??.logfiles.zip &> /dev/null; then
-    echo "No results for ${VALIDATION}-${VERIFIER}."
+  RESULT_ID=$(find "$RESULTSVALIDATION" -maxdepth 1 -type f -name "$VALIDATION-$VERIFIER.????-??-??_??-??-??.results.*txt" | sort --reverse | sed -e "s#^.*/##" -e "s/\.results\..*txt$//" | head -1)
+  if [[ "$RESULT_ID" == "" ]]; then
+    echo "    No results (txt) found for $VALIDATION-$VERIFIER."
     continue
   fi
-  RESULT_DIR=$(ls -dt1 "$RESULTSVALIDATION/${VALIDATION}-${VERIFIER}".????-??-??_??-??-??.logfiles.zip | head -1)
-  RESULT_DIR="${RESULT_DIR%.logfiles.zip}"
-  RESULT_DIR="${RESULT_DIR#*/}"
-  echo "Results: $RESULT_DIR"
-  rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
-  rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
-  rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.txt"    --exclude="*" "$SOURCE" "$TARGET"
-  rsync -axzq --dirs --no-recursive --include="$RESULT_DIR.*.json"    --exclude="*" "$SOURCE" "$TARGET"
+  echo "Results: $RESULT_ID"
+  rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
+  rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.zip"     --exclude="*" "$SOURCE" "$TARGET"
+  rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.txt"     --exclude="*" "$SOURCE" "$TARGET"
+  rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.json"    --exclude="*" "$SOURCE" "$TARGET"
 done
 
 echo "... backup to scratch"
