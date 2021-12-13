@@ -25,6 +25,13 @@ are provided in the competition-specific repositories.
 The following instructions are specific to competitions that are executed on the compute cluster at LMU Munich (Apollon machines),
 and try to explain the computing environment that is used for the competitions.
 
+
+### Installed Ubuntu packages
+
+A list of Ubuntu packages that are installed on the competition packages is available here:
+https://gitlab.com/sosy-lab/benchmarking/competition-scripts/-/blob/main/test/Ubuntu-packages.txt
+
+
 ### Docker Image
 The competition provides a Docker image that tries to provide an environment
 that has mostly the same packages installed as the competition machines:
