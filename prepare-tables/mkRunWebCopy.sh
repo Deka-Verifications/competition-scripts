@@ -16,13 +16,14 @@ cd "$PATHPREFIX"
 #./contrib/mkValidatorStatistics.py --category-structure benchmark-defs/category-structure.yml --htmlfile ${PATHPREFIX}/${RESULTSVERIFICATION}/validatorStatistics.html
 #gzip -9 --force ${PATHPREFIX}/${RESULTSVERIFICATION}/validatorStatistics.html
 
-echo "Copy to web server ..."
+echo "Copy results for $VERIFIER to web server ..."
 echo "... $RESULTSVERIFICATION"
 SOURCE="$PATHPREFIX/$RESULTSVERIFICATION/"
 TARGET="www-comp.sosy.ifi.lmu.de:/srv/web/data/$TARGETDIR/$YEAR/results/$RESULTSVERIFICATION/"
 RESULT_ID=$(find "$RESULTSVERIFICATION" -maxdepth 1 -type f -name "$VERIFIER.????-??-??_??-??-??.results.*txt" | sort --reverse | sed -e "s#^.*/##" -e "s/\.results\..*txt$//" | head -1)
 if [[ "$RESULT_ID" == "" ]]; then
   echo "    No results (txt) found for $VERIFIER."
+  echo
   exit
 fi
 echo "Results: $RESULT_ID"
