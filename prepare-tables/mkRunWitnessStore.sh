@@ -5,12 +5,12 @@
 # @description Creates the wirness and test suite story by calling the python script mkRunWitnessStore.py.
 # TODO: what does the python script do?
 
-source scripts/configure.sh
+source $(dirname "$0")/../configure.sh
 
 cd ${PATHPREFIX}
 
 date -Iseconds;
-nice python3 contrib/mkRunWitnessStore.py
+nice python3 $(dirname "$0")/mkRunWitnessStore.py
 date -Iseconds;
 
 echo "Prepare maps ...";
