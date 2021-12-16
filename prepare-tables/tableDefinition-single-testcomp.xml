@@ -3,10 +3,10 @@
 <table>
     <column title="status"/>
     <column title="score"/>
-    <column title="tests"       href="___WITDOWNDEL___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/test-suite.zip">tests</column>
-    <column title="tests"       numberOfDigits="2" href="___TESTSUITESIZE___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/test-suite.zip">0</column>
-    <column title="tests"       href="${taskdef_path}/${taskdef_name}___WITINSPDEL___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/test-suite.zip">inspect</column>
-    <column title="branches_plot"    displayTitle="cov. plot" href="___COVPLOT___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/test-suite.zip">0</column>
+    <column title="tests"       href="___WITDOWNDEL___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/test-suite.zip">tests</column>
+    <column title="tests"       numberOfDigits="2" href="___TESTSUITESIZE___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/test-suite.zip">0</column>
+    <column title="tests"       href="${taskdef_path}/${taskdef_name}___WITINSPDEL___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/test-suite.zip">inspect</column>
+    <column title="branches_plot"    displayTitle="cov. plot" href="___COVPLOT___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/test-suite.zip">0</column>
     <column title="branches_covered" displayTitle="cov"/>
     <column title="cputime"     numberOfDigits="2" displayTitle="cpu"/>
     <column title="walltime"    numberOfDigits="2" displayTitle="wall"/>

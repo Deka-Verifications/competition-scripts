@@ -3,8 +3,8 @@
 <table>
     <column title="status"/>
     <column title="score" displayTitle="raw score"/>
-    <column title="witness" href="___WITDOWNDEL___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/witness.graphml">wit</column>
-    <column title="inspect witness" href="${taskdef_path}/${taskdef_name}___WITINSPDEL___${logfile_path}/___RUNDEFNAME___.${taskdef_name}/witness.graphml">inspect</column>
+    <column title="witness" href="___WITDOWNDEL___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/witness.graphml">wit</column>
+    <column title="inspect witness" href="${taskdef_path}/${taskdef_name}___WITINSPDEL___${logfile_path}/___RUNDEFNAME___/${taskdef_name}/witness.graphml">inspect</column>
     <column title="cputime"     numberOfDigits="2" displayTitle="cpu"/>
     <column title="walltime"    numberOfDigits="2" displayTitle="wall"/>
     <column title="memory"      numberOfDigits="2" displayTitle="mem"     displayUnit="MB" sourceUnit="B"/>
