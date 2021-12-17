@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# be careful not to add a comma in the array!
-FILES_TO_REMOVE=$(cat ./contrib/mkAnaRemoveResults.csv)
+FILES_TO_REMOVE=$(cat "$(dirname "$0")"/mkAnaRemoveResults.csv)
 
 grep_pattern=$(echo ${FILES_TO_REMOVE[@]} | tr " " "|")
 
