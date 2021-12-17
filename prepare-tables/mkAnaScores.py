@@ -892,7 +892,7 @@ def get_member_lines(category_info):
         try:
             member_homepage = check_http(member_info["url"])
             result_members += (
-                "<td><a href='" + member_homepage + "'>" + member_name + "</a></td>"
+                "<td>" + (member_name if not member_homepage else "<a href='" + member_homepage + "'>" + member_name + "</a>") + "</td>"
             )
         except KeyError:
             result_members += "<td>" + member_name + "</td>"
