@@ -1611,7 +1611,6 @@ def main(argv=None):
     rename_to_old_if_exists(HTMLSCORES)
     rename_to_old_if_exists(TEXRANKING)
     rename_to_old_if_exists(TEXRESULTS)
-    rename_to_old_if_exists(TABLESETUP)
 
     with open(categories_yml) as inp:
         try:
