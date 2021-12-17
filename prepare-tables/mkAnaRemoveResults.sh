@@ -12,7 +12,7 @@ for dir in results-verified results-validated; do
       input=$(bzcat "$i")
       for to_remove in ${FILES_TO_REMOVE[@]}; do
           escaped_pattern=$(echo $to_remove | sed 's/[]\/$*.^|[]/\\&/g')
-          input=$(sed "/c\/$escaped_pattern/,/<\/run>/d" <<< "$input")
+          input=$(sed "/$escaped_pattern/,/<\/run>/d" <<< "$input")
       done
       echo "$input" | bzip2 -9 > "$i.tmp"
       mv "$i.tmp" "$i"
