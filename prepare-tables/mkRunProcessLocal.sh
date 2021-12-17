@@ -231,9 +231,9 @@ rm ${ALL_HASHES};
 
 
 echo "Generating list of HTML pages ...";
-echo "<html><body>" > ${HTMLOVERVIEW};
+HTMLOVERVIEW="$VERIFIER.list.html"
 # Run according to category structure.
-for VERIFIERCURR in $(yq --raw-output '.verifiers | keys []' benchmark-defs/category-structure.yml); do
+VERIFIERCURR="$VERIFIER"
       VERIFIERXML="${VERIFIERCURR}.xml";
       echo Processing $VERIFIERCURR starting at `date --rfc-3339=seconds`;
       cd ${PATHPREFIX};
@@ -242,8 +242,8 @@ for VERIFIERCURR in $(yq --raw-output '.verifiers | keys []' benchmark-defs/cate
         continue
       fi
       CATEGORIES=`grep "\.set" ${BENCHMARKSDIR}/${VERIFIERXML} | sed "s/.*\/\(.*\)\.set.*/\1/"`
-      echo "<h3>$VERIFIERCURR</h3>" >> ${HTMLOVERVIEW};
       cd ${PATHPREFIX}/${RESULTSVERIFICATION};
+      echo "<h3>$VERIFIERCURR</h3>" > ${HTMLOVERVIEW};
       FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIERCURR}.results.${COMPETITION}.All.table.html.gz"`
       if [ -n "$FOUNDRESULTS" ]; then
         LINK=`ls -t ${VERIFIERCURR}.results.${COMPETITION}.All.table.html.gz | head -1`;
@@ -266,9 +266,6 @@ for VERIFIERCURR in $(yq --raw-output '.verifiers | keys []' benchmark-defs/cate
 	fi
        done # for category
       done # for property
-    done # while verifier
-echo "</body></html>" >> ${HTMLOVERVIEW};
-
 
 
 

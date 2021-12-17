@@ -27,8 +27,8 @@ if [[ "$RESULT_ID" == "" ]]; then
   exit
 fi
 echo "Results: $RESULT_ID"
-rsync -axzq "$HTMLOVERVIEW" "$TARGET"
 rsync -axzq "$RESULTSVERIFICATION/$VERIFIER.results.$COMPETITION.All.table.html.gz" "$TARGET"
+rsync -axzq "$RESULTSVERIFICATION/$VERIFIER.list.html" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.html.gz" --exclude="*" "$SOURCE" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.xml.bz2" --exclude="*" "$SOURCE" "$TARGET"
 rsync -axzq --dirs --no-recursive --include="$RESULT_ID.*.zip"     --exclude="*" "$SOURCE" "$TARGET"

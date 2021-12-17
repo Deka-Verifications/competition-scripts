@@ -15,7 +15,6 @@ export PATHPREFIX=$(realpath .)
 TARGETDIR=${COMPETITIONNAME}
 export RESULTSVERIFICATION="results-verified";
 export RESULTSVALIDATION="results-validated";
-export HTMLOVERVIEW="$PATHPREFIX/${RESULTSVERIFICATION}/iZeCa0gaey.html";
 export BINDIR="bin";
 export PYTHONPATH="${PATHPREFIX}/benchexec";
 export BENCHEXEC_PATH="${PATHPREFIX}/benchexec";
