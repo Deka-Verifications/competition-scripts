@@ -843,7 +843,7 @@ def get_name(category_info, verifier):
         sys.exit(1)
 
 
-def to_http(url):
+def check_http(url):
     if url:
         assert url.startswith("http")
     return url
@@ -856,7 +856,7 @@ def get_project_url(category_info, verifier):
     except KeyError:
         logging.warning("No project url for %s", verifier)
         return ""
-    return to_http(url)
+    return check_http(url)
 
 
 def get_link(category_info, verifier):
@@ -890,7 +890,7 @@ def get_member_lines(category_info):
             logging.warning("Failed to get info for %s, ignoring: %s", verifier, e)
             continue
         try:
-            member_homepage = to_http(member_info["url"])
+            member_homepage = check_http(member_info["url"])
             result_members += (
                 "<td><a href='" + member_homepage + "'>" + member_name + "</a></td>"
             )
