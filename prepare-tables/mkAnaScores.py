@@ -235,7 +235,7 @@ class Category:
 def write_text(path, text):
     # Only compatible to python > 3.5
     # path.write_text(text)
-    with open(str(path), "a") as f:
+    with open(str(path), "w") as f:
         f.write(text + "\n")
 
 
