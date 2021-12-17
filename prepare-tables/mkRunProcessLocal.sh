@@ -232,39 +232,38 @@ rm ${ALL_HASHES};
 
 echo "Generating list of HTML pages ...";
 HTMLOVERVIEW="$VERIFIER.list.html"
-# Run according to category structure.
-      VERIFIERXML="${VERIFIER}.xml";
-      echo Processing $VERIFIER starting at `date --rfc-3339=seconds`;
-      cd ${PATHPREFIX};
-      if [ ! -e ${BENCHMARKSDIR}/${VERIFIERXML} ]; then
-        echo "File ${BENCHMARKSDIR}/${VERIFIERXML} not found."
-        continue
+VERIFIERXML="${VERIFIER}.xml";
+echo Processing $VERIFIER starting at `date --rfc-3339=seconds`;
+cd ${PATHPREFIX};
+if [ ! -e ${BENCHMARKSDIR}/${VERIFIERXML} ]; then
+  echo "File ${BENCHMARKSDIR}/${VERIFIERXML} not found."
+  continue
+fi
+CATEGORIES=`grep "\.set" ${BENCHMARKSDIR}/${VERIFIERXML} | sed "s/.*\/\(.*\)\.set.*/\1/"`
+cd ${PATHPREFIX}/${RESULTSVERIFICATION};
+echo "<h3>$VERIFIER</h3>" > ${HTMLOVERVIEW};
+FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.results.${COMPETITION}.All.table.html.gz"`
+if [ -n "$FOUNDRESULTS" ]; then
+  LINK=`ls -t ${VERIFIER}.results.${COMPETITION}.All.table.html.gz | head -1`;
+  if [ -e "$LINK" ]; then
+    echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
+    echo "<br/>" >> ${HTMLOVERVIEW};
+  fi
+fi
+for PROP in $PROPERTIES; do
+  echo "";
+  echo "  Property $PROP";
+  for i in $CATEGORIES; do
+    FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz"`
+    if [ -n "$FOUNDRESULTS" ]; then
+      LINK=`ls -t ${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz | head -1`;
+      if [ -e "$LINK" ]; then
+        echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
+        echo "<br/>" >> ${HTMLOVERVIEW};
       fi
-      CATEGORIES=`grep "\.set" ${BENCHMARKSDIR}/${VERIFIERXML} | sed "s/.*\/\(.*\)\.set.*/\1/"`
-      cd ${PATHPREFIX}/${RESULTSVERIFICATION};
-      echo "<h3>$VERIFIER</h3>" > ${HTMLOVERVIEW};
-      FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.results.${COMPETITION}.All.table.html.gz"`
-      if [ -n "$FOUNDRESULTS" ]; then
-        LINK=`ls -t ${VERIFIER}.results.${COMPETITION}.All.table.html.gz | head -1`;
-        if [ -e "$LINK" ]; then
-          echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
-          echo "<br/>" >> ${HTMLOVERVIEW};
-        fi
-      fi
-      for PROP in $PROPERTIES; do
-       echo "";
-       echo "  Property $PROP";
-       for i in $CATEGORIES; do
-        FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz"`
-        if [ -n "$FOUNDRESULTS" ]; then
-          LINK=`ls -t ${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz | head -1`;
-          if [ -e "$LINK" ]; then
-            echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
-            echo "<br/>" >> ${HTMLOVERVIEW};
-	  fi
-	fi
-       done # for category
-      done # for property
+    fi
+  done # for category
+done # for property
 
 
 
