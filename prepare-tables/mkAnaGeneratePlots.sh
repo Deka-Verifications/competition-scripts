@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source $(dirname "$0")/configure.sh
-set -x
+source $(dirname "$0")/../configure.sh
+#set -x
 
 OUTPUTDIR="${RESULTSVERIFICATION}/";
 #OUTPUTDIR="results-B/${RESULTSVERIFICATION}/";
@@ -108,8 +108,8 @@ set origin $ORIGINA
       if [[ $YMINNEW -le $YMIN ]]; then
           YMIN=$YMINNEW
       fi
-      LINECOLOR=`grep "^$TOOL:" contrib/qPlotMapColor.cfg | cut -d : -f 2`;
-      POINTTYPE=`grep "^$TOOL:" contrib/qPlotMapPointType.cfg | cut -d : -f 2`;
+      LINECOLOR=`grep "^$TOOL:" $(dirname "$0")/qPlotMapColor.cfg | cut -d : -f 2`;
+      POINTTYPE=`grep "^$TOOL:" $(dirname "$0")/qPlotMapPointType.cfg | cut -d : -f 2`;
       #echo $TOOL $LINECOLOR $POINTTYPE
       CMD="$CMD '$TOOLFILE' using 1:2 with linespoints linecolor rgb \"${LINECOLOR}\" pointtype ${POINTTYPE} pointinterval $POINTINTERVAL linewidth ${LINEWIDTH} title '$TOOLSHORT',";
     done; # FOR tool
