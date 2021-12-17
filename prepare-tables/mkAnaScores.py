@@ -70,7 +70,6 @@ TABLESETUP = None
 TEXRANKING = None
 TEXRESULTS = None
 QPLOT_PATH = None
-TABLETSV = None
 
 
 def msg_to_output(msg):
@@ -693,6 +692,14 @@ def get_verifiers(category_info):
     return category_info["verifiers"]
 
 
+def get_verifier_info(category_info, verifier):
+    return get_verifiers(category_info)[verifier]
+
+
+def get_representative_info(category_info, verifier):
+    return get_verifier_info(category_info, verifier)["jury-member"]
+
+
 def get_categories(category_info):
     """Returns the defined meta-categories of the given category info"""
     return category_info["categories"]
@@ -828,79 +835,77 @@ def get_best(category, category_info, isFalsification=False):
     return result
 
 
-def get_name(tabletsv_content, verifier):
-    for line in tabletsv_content.split(os.linesep):
-        if line and verifier + ".xml" == line.split("\t")[5].strip():
-            return line.split("\t")[2]
-    logging.error("Participant not in %s: %s", str(TABLETSV), verifier)
-    sys.exit(1)
+def get_name(category_info, verifier):
+    try:
+        return get_verifier_info(category_info, verifier)["name"]
+    except KeyError:
+        logging.error("Participant not in category structure: %s", verifier)
+        sys.exit(1)
 
 
-def get_link(tabletsv_content, verifier):
-    for line in tabletsv_content.split("\n"):
-        if verifier + ".xml" == line.split("\t")[5]:
-            if line.split("\t")[4]:
-                return (
-                    "<a href='"
-                    + line.split("\t")[4]
-                    + "'>"
-                    + line.split("\t")[2]
-                    + "</a>"
-                )
-            else:
-                return line.split("\t")[2]
-    assert not verifier
-    return ""
+def to_http(url):
+    if not url.startswith("http"):
+        logging.warning("URL is not a valid http URL: %s", url)
+        logging.info("Adding missing https:// to invalid URL %s", url)
+        return f"https://{url}"
+    return url
 
 
-def get_link_alltab(tabletsv_content, verifier, category_info):
+def get_project_url(category_info, verifier):
+    info = get_verifier_info(category_info, verifier)
+    try:
+        url = info["url"]
+    except KeyError:
+        logging.warning("No project url for %s", verifier)
+        return ""
+    return to_http(url)
+
+
+def get_link(category_info, verifier):
+    url = get_project_url(category_info, verifier)
+    return f"<a href='{url}'>{get_name(category_info, verifier)}</a>"
+
+
+def get_link_alltab(verifier, category_info):
     return (
         "<a href='"
         + verifier
         + ".results."
         + get_competition_with_year(category_info)
         + ".All.table.html'>"
-        + get_name(tabletsv_content, verifier)
+        + get_name(category_info, verifier)
         + "</a>"
     )
 
 
-def get_member_lines(tabletsv_content, category_info):
+def get_member_lines(category_info):
     result_members = "\t<tr>\n\t\t<td>Representing Jury Member</td><td></td>"
     result_affil = "\t<tr>\n\t\t<td>Affiliation</td><td></td>"
     for verifier in get_verifiers(category_info):
-        for line in tabletsv_content.split("\n"):
-            try:
-                listed_verifier = line.split("\t")[5]
-                member_name = line.split("\t")[7]
-                member_affiliation = line.split("\t")[9]
-            except IndexError as e:
-                logging.debug("Failed to get info for %s, ignoring: %s", line, e)
-                continue
-            try:
-                member_homepage = line.split("\t")[10].strip()
-            except IndexError:
-                member_homepage = None
+        member_info = get_representative_info(category_info, verifier)
+        try:
+            member_name = member_info["name"]
+            member_affiliation = (
+                f"{member_info['institution']}, {member_info['country']}"
+            )
+        except KeyError as e:
+            logging.warning("Failed to get info for %s, ignoring: %s", verifier, e)
+            continue
+        try:
+            member_homepage = to_http(member_info["url"])
+            result_members += (
+                "<td><a href='" + member_homepage + "'>" + member_name + "</a></td>"
+            )
+        except KeyError:
+            result_members += "<td>" + member_name + "</td>"
 
-            if verifier + ".xml" == listed_verifier:
-                if member_homepage:
-                    result_members += (
-                        "<td><a href='"
-                        + member_homepage
-                        + "'>"
-                        + member_name
-                        + "</a></td>"
-                    )
-                else:
-                    result_members += "<td>" + member_name + "</td>"
-
-                result_affil += "<td>" + member_affiliation + "</td>"
+        result_affil += "<td>" + member_affiliation + "</td>"
     result_members += "\n\t</tr>\n"
     result_affil += "\n\t</tr>\n"
     return result_members + result_affil
 
 
-def get_verifier_html_and_tab(tabletsv_content, category_info):
+def get_verifier_html_and_tab(category_info):
     verifier_html = (
         "\t\t<th><a href='../../systems.php'>Participants</a></th><th>Plots</th>"
     )
@@ -908,12 +913,8 @@ def get_verifier_html_and_tab(tabletsv_content, category_info):
 
     for verifier in get_verifiers(category_info):
         logging.info(verifier)
-        verifier_html += (
-            "<th>"
-            + get_link_alltab(tabletsv_content, verifier, category_info)
-            + "</th>"
-        )
-        verifier_tab += get_name(tabletsv_content, verifier) + "\t"
+        verifier_html += "<th>" + get_link_alltab(verifier, category_info) + "</th>"
+        verifier_tab += get_name(category_info, verifier) + "\t"
 
     return verifier_html, verifier_tab
 
@@ -1001,10 +1002,7 @@ def _get_html_table_cell(content: Optional[str], measure: str, rank_class: str) 
 
 
 def dump_output_files(processed_categories, category_info):
-    tabletsv_content = read_text(TABLETSV)
-    verifier_html, verifier_tab = get_verifier_html_and_tab(
-        tabletsv_content, category_info
-    )
+    verifier_html, verifier_tab = get_verifier_html_and_tab(category_info)
     html_string = (
         """
 <hr/>
@@ -1034,7 +1032,7 @@ and the <a href="../../benchmarks.php">categories</a> is given on the respective
         + verifier_html
         + "\n\t</tr>\n"
         + "</thead>\n<tbody>"
-        + get_member_lines(tabletsv_content, category_info)
+        + get_member_lines(category_info)
     )
     html_ranking_string = """
 <hr />
@@ -1257,7 +1255,7 @@ and the <a href="../../benchmarks.php">categories</a> is given on the respective
                     "QPLOT."
                     + categoryname.replace(".", "-")
                     + "."
-                    + get_name(tabletsv_content, verifier)
+                    + get_name(category_info, verifier)
                     .replace("/", "-")
                     .replace(" ", "-")
                     .replace(".", "-")
@@ -1275,7 +1273,7 @@ and the <a href="../../benchmarks.php">categories</a> is given on the respective
                     "QPLOT."
                     + categoryname.replace(".", "-")
                     + "."
-                    + get_name(tabletsv_content, verifier)
+                    + get_name(category_info, verifier)
                     .replace("/", "-")
                     .replace(" ", "-")
                     .replace(".", "-")
@@ -1344,13 +1342,13 @@ and the <a href="../../benchmarks.php">categories</a> is given on the respective
                 + categoryname
                 + "</a></span><br />\n"
                 + "        <span class='rank gold'  >1. "
-                + get_link(tabletsv_content, best_verifiers[0])
+                + get_link(category_info, best_verifiers[0])
                 + "</span> <br />\n"
                 + "        <span class='rank silver'>2. "
-                + get_link(tabletsv_content, best_verifiers[1])
+                + get_link(category_info, best_verifiers[1])
                 + "</span> <br />\n"
                 + "        <span class='rank bronze'>3. "
-                + get_link(tabletsv_content, best_verifiers[2])
+                + get_link(category_info, best_verifiers[2])
                 + "</span> <br />\n"
                 + "        <a href='quantilePlot-"
                 + categoryname.replace(".", "-")
@@ -1599,7 +1597,7 @@ def main(argv=None):
     results_path = args.results_path
     categories_yml = args.category
 
-    global TABLENAME, HTMLSCORES, TABSCORES, RSFSCORES, TABLESETUP, TEXRANKING, TEXRESULTS, QPLOT_PATH, TABLETSV
+    global TABLENAME, HTMLSCORES, TABSCORES, RSFSCORES, TABLESETUP, TEXRANKING, TEXRESULTS, QPLOT_PATH
     TABLENAME = "scoretable"
     # TABLENAME  = "AhT8IeQuoo"
     HTMLSCORES = results_path / Path(TABLENAME + ".html")
@@ -1620,19 +1618,6 @@ def main(argv=None):
     with open(categories_yml) as inp:
         try:
             ctgry_info = yaml.load(inp, Loader=yaml.FullLoader)
-            competition = ctgry_info["competition"]
-
-            if competition.startswith(SV_COMP):
-                TABLETSV = Path("contrib") / "table-svcomp.tsv"
-            elif competition.startswith(TEST_COMP):
-                TABLETSV = Path("contrib") / "table-testcomp.tsv"
-            else:
-                assert False, "Unhandled competition name: " + competition
-
-            if not TABLETSV.exists():
-                print("Doesn't exist:", str(TABLETSV))
-                sys.exit(1)
-
         except yaml.YAMLError as e:
             print(e)
             sys.exit(1)
@@ -1723,6 +1708,7 @@ def main(argv=None):
         ),
     )
     msg_to_output("Overall done.")
+    competition = ctgry_info["competition"]
     if SV_COMP in competition:
         processed_categories = concatenate_dict(
             processed_categories,
