@@ -1606,11 +1606,12 @@ def main(argv=None):
     TEXRESULTS = results_path / "scoreresults.tex"
     QPLOT_PATH = Path("./results-qplots")
 
-    rename_to_old_if_exists(RSFSCORES)
-    rename_to_old_if_exists(TABSCORES)
-    rename_to_old_if_exists(HTMLSCORES)
-    rename_to_old_if_exists(TEXRANKING)
-    rename_to_old_if_exists(TEXRESULTS)
+    # rename_to_old_if_exists(RSFSCORES)
+    # rename_to_old_if_exists(TABSCORES)
+    # rename_to_old_if_exists(HTMLSCORES)
+    # rename_to_old_if_exists(TEXRANKING)
+    # rename_to_old_if_exists(TEXRESULTS)
+    # rename_to_old_if_exists(TABLESETUP)
 
     with open(categories_yml) as inp:
         try:
