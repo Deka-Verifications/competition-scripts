@@ -235,7 +235,7 @@ class Category:
 def write_text(path, text):
     # Only compatible to python > 3.5
     # path.write_text(text)
-    with open(str(path), "w") as f:
+    with open(str(path), "a") as f:
         f.write(text + "\n")
 
 
@@ -1612,6 +1612,12 @@ def main(argv=None):
     # rename_to_old_if_exists(TEXRANKING)
     # rename_to_old_if_exists(TEXRESULTS)
     # rename_to_old_if_exists(TABLESETUP)
+    RSFSCORES.unlink(missing_ok=True)
+    TABSCORES.unlink(missing_ok=True)
+    HTMLSCORES.unlink(missing_ok=True)
+    TEXRANKING.unlink(missing_ok=True)
+    TEXRESULTS.unlink(missing_ok=True)
+    TABLESETUP.unlink(missing_ok=True)
 
     with open(categories_yml) as inp:
         try:
