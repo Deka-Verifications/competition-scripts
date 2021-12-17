@@ -844,10 +844,11 @@ def get_name(category_info, verifier):
 
 
 def to_http(url):
-    if not url.startswith("http"):
-        logging.warning("URL is not a valid http URL: %s", url)
-        logging.info("Adding missing https:// to invalid URL %s", url)
-        return f"https://{url}"
+    if url:
+        if not url.startswith("http"):
+            logging.warning("URL is not a valid http URL: %s", url)
+            logging.info("Adding missing https:// to invalid URL %s", url)
+            return f"https://{url}"
     return url
 
 
