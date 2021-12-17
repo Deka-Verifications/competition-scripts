@@ -233,9 +233,8 @@ rm ${ALL_HASHES};
 echo "Generating list of HTML pages ...";
 HTMLOVERVIEW="$VERIFIER.list.html"
 # Run according to category structure.
-VERIFIERCURR="$VERIFIER"
-      VERIFIERXML="${VERIFIERCURR}.xml";
-      echo Processing $VERIFIERCURR starting at `date --rfc-3339=seconds`;
+      VERIFIERXML="${VERIFIER}.xml";
+      echo Processing $VERIFIER starting at `date --rfc-3339=seconds`;
       cd ${PATHPREFIX};
       if [ ! -e ${BENCHMARKSDIR}/${VERIFIERXML} ]; then
         echo "File ${BENCHMARKSDIR}/${VERIFIERXML} not found."
@@ -243,10 +242,10 @@ VERIFIERCURR="$VERIFIER"
       fi
       CATEGORIES=`grep "\.set" ${BENCHMARKSDIR}/${VERIFIERXML} | sed "s/.*\/\(.*\)\.set.*/\1/"`
       cd ${PATHPREFIX}/${RESULTSVERIFICATION};
-      echo "<h3>$VERIFIERCURR</h3>" > ${HTMLOVERVIEW};
-      FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIERCURR}.results.${COMPETITION}.All.table.html.gz"`
+      echo "<h3>$VERIFIER</h3>" > ${HTMLOVERVIEW};
+      FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.results.${COMPETITION}.All.table.html.gz"`
       if [ -n "$FOUNDRESULTS" ]; then
-        LINK=`ls -t ${VERIFIERCURR}.results.${COMPETITION}.All.table.html.gz | head -1`;
+        LINK=`ls -t ${VERIFIER}.results.${COMPETITION}.All.table.html.gz | head -1`;
         if [ -e "$LINK" ]; then
           echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
           echo "<br/>" >> ${HTMLOVERVIEW};
@@ -256,9 +255,9 @@ VERIFIERCURR="$VERIFIER"
        echo "";
        echo "  Property $PROP";
        for i in $CATEGORIES; do
-        FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIERCURR}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz"`
+        FOUNDRESULTS=`find . -maxdepth 1 -name "${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz"`
         if [ -n "$FOUNDRESULTS" ]; then
-          LINK=`ls -t ${VERIFIERCURR}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz | head -1`;
+          LINK=`ls -t ${VERIFIER}.????-??-??_??-??-??.results.${COMPETITION}_${PROP}.$i*.html.gz | head -1`;
           if [ -e "$LINK" ]; then
             echo "<a href=\"${LINK%\.gz}#/table\">${LINK%\.gz}</a>" >> ${HTMLOVERVIEW};
             echo "<br/>" >> ${HTMLOVERVIEW};
