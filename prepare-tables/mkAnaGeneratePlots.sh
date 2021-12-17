@@ -71,7 +71,7 @@ set rmargin $RMARGIN
 unset xlabel
 unset xtics
 $YLABELCOMMAND
-set key left top
+set key at -40, 500
 $SCALECOMMAND
 set pointsize 1.0
 set multiplot layout 2,1
