@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# symlink mergeBenchmarkSets.py to the folder where this script is in order to make this import work:
-from mergeBenchmarkSets import *
+# Call using `PYTHONPATH=benchexec ./scripts/prepare-tables/mkValidatorStatistics.py`
+from contrib.mergeBenchmarkSets import *
 from collections import Counter
 import os
 import re
