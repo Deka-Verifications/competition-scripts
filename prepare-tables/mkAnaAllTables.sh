@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(dirname "$0")/configure.sh
+source $(dirname "$0")/../configure.sh
 source $(dirname "$0")/mkAnaAllTables-Config.sh
 HTMLOVERVIEW="overview.html";
 
@@ -48,7 +48,7 @@ if [[ "${DOCREATESINGLECATEGORY}" == "YES" ]]; then
     "$BENCHEXEC_PATH"/bin/table-generator --no-diff --format html -x $OUTPUT_FILE
     rm $OUTPUT_FILE
     echo "Removing score row from table ...";
-    "$PATHPREFIX"/contrib/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUTPUT_FILE//.xml/.table.html};
+    "$PATHPREFIX"/scripts/prepare-tables/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUTPUT_FILE//.xml/.table.html};
     gzip -9 --force ${OUTPUT_FILE//.xml/.table.html};
     echo "<a href=\"${OUTPUT_FILE//.xml/.table.html}\">${OUTPUT_FILE//.xml/.table.html}</a> <br />" >> ${HTMLOVERVIEW};
   done
@@ -106,7 +106,7 @@ for LINE in "${VERIFIERSLIST[@]}"; do
       "$BENCHEXEC_PATH"/bin/table-generator --no-diff --format html -x ${OUT_META_VER}
       rm $OUT_META_VER
       echo "Removing score row from table ...";
-      "$PATHPREFIX"/contrib/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUT_META_VER//.xml/.table.html}
+      "$PATHPREFIX"/scripts/prepare-tables/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUT_META_VER//.xml/.table.html}
       gzip -9 --force ${OUT_META_VER//.xml/.table.html};
       echo "<a href=\"${OUT_META_VER//.xml/.table.html}\">${OUT_META_VER//.xml/.table.html}</a> <br />" >> ${HTMLOVERVIEW};
     done
@@ -117,7 +117,7 @@ for LINE in "${VERIFIERSLIST[@]}"; do
   "$BENCHEXEC_PATH"/bin/table-generator --no-diff --format html -x $OUTPUT_FILE
   rm $OUTPUT_FILE
   echo "Removing score row from table ...";
-  "$PATHPREFIX"/contrib/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUTPUT_FILE//.xml/.table.html}
+  "$PATHPREFIX"/scripts/prepare-tables/mkRunProcessLocal-RemoveScoreStats.py --insitu ${OUTPUT_FILE//.xml/.table.html}
   gzip -9 --force ${OUTPUT_FILE//.xml/.table.html};
   echo "<a href=\"${OUTPUT_FILE//.xml/.table.html}\">${OUTPUT_FILE//.xml/.table.html}</a> <br />" >> ${HTMLOVERVIEW};
 done
