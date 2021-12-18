@@ -111,7 +111,7 @@ def scanWitnessResults(verifier, category, property_, counter):
             logging.error(f"File {repr(witnessFile)} does not exist")
             sys.exit(1)
         witnessXML = tablegenerator.parse_results_file(witnessFile)
-        witnessSets.append(getWitnesses(witnessXML))
+        witnessSets.append(get_witnesses(witnessXML))
 
     # check for presence of validator results for every (verifier,category) in case category-structure.yml claims that the validator is validating the category
     for val in catdict["categories"][category]["validators"]:
@@ -160,7 +160,7 @@ def scanWitnessResults(verifier, category, property_, counter):
                     + xmlPathToValidatorName(witnessFile)
                 ] += 1
                 # For verification
-                statusWitNew, categoryWitNew = getWitnessResult(
+                statusWitNew, categoryWitNew = get_witness_result(
                     witness, result
                 )  # for this call we need the import from mergeBenchmarkSets.py
                 d[witnessFile] = (statusWitNew, categoryWitNew)
