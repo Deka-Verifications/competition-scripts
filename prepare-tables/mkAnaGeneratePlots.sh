@@ -71,7 +71,8 @@ set rmargin $RMARGIN
 unset xlabel
 unset xtics
 $YLABELCOMMAND
-set key at -40, 500
+#set key at -40, 500
+set key top left
 $SCALECOMMAND
 set pointsize 1.0
 set multiplot layout 2,1
@@ -88,7 +89,9 @@ set origin $ORIGINA
     for TOOLFILE in `ls ${QPLOTDIR}QPLOT.$CAT.*.quantile-plot.csv`; do
       TOOL=`echo $TOOLFILE | cut -d '.' -f 3`;
       set +e
-      TOOLSHORT=`echo $TOOL | sed -e "s/ESBMC+DepthK/DepthK/" -e "s/SMACK+Corral/SMACK/"`
+      TOOLSHORT=$(echo $TOOL | sed -e "s/ESBMC+DepthK/DepthK/" -e "s/SMACK+Corral/SMACK/" \
+	                           -e "s/CoVeriTeam-Verifier-AlgoSelection/CVT-AlgoSel/" \
+			           -e "s/CoVeriTeam-Verifier-ParallelPortfolio/CVT-ParPort/")
       XMINNEW=`cat "$TOOLFILE" | head -1 | cut -f 1 | sed "s/\..*//"`
       XMAXNEW=`cat "$TOOLFILE" | tail -1 | cut -f 1 | sed "s/\..*//"`
       set -e
