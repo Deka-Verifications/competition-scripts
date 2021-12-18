@@ -230,13 +230,6 @@ if __name__ == "__main__":
         open(args.category_structure, "r").read(), Loader=yaml.FullLoader
     )
 
-    # hack for inconsistency between main category name and filename of the xml:
-    if "NoOverflows" in catdict["categories"]:
-        catdict["categories"]["NoOverflow"] = catdict["categories"]["NoOverflows"]
-        del catdict["categories"]["NoOverflows"]
-        assert not "NoOverflows" in catdict["categories"]
-        assert "NoOverflow" in catdict["categories"]
-
     # remove meta-categories for now, as they do not have their own xml file:
     for entry in (
         "FalsificationOverall",
