@@ -887,8 +887,8 @@ def get_member_lines(category_info):
                 f"{member_info['institution']}, {member_info['country']}"
             )
         except KeyError as e:
-            logging.warning("Failed to get info for %s, ignoring: %s", verifier, e)
-            continue
+            logging.error("Failed to get info for %s: %s", verifier, e)
+            sys.exit(1)
         try:
             member_homepage = check_http(member_info["url"])
             result_members += (
