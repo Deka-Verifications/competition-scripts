@@ -45,7 +45,7 @@ elif [[ "$FORMATEXT" = "png" ]]; then
   ORIGINB="0,0";
   POINTINTERVAL=100;
 else
-  FORMAT="svg font \"Helvetica,10\" size 800,400";
+  FORMAT="svg font \"Helvetica,8\" size 800,400";
   LINEWIDTH="2";
   TMARGIN="1.2";
   LMARGIN="7";
