@@ -25,7 +25,7 @@ def getLatestVerifierXML(verifier, category):
     """
     r = re.compile(
         verifier
-        + "\.(.?.?.?.?-.?.?-.?.?_.?.?-.?.?-.?.?)\.results\.SV-COMP21_"
+        + "\.(.?.?.?.?-.?.?-.?.?_.?.?-.?.?-.?.?)\.results\.SV-COMP22_"
         + category.lower()
         + "\.xml\.bz2"
     )
@@ -52,7 +52,7 @@ def getLatestWitnessXMLs(verifier, category):
     rval = re.compile(
         "(.*)-"
         + verifier
-        + "\.(.?.?.?.?-.?.?-.?.?_.?.?-.?.?-.?.?)\.results\.SV-COMP21_"
+        + "\.(.?.?.?.?-.?.?-.?.?_.?.?-.?.?-.?.?)\.results\.SV-COMP22_"
         + category.lower()
         + "\.xml\.bz2"
     )
